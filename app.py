@@ -16,7 +16,7 @@ BOT_ID = os.getenv('GROUPME_BOT_ID')
 TOKEN = os.getenv('TOKEN')
 MAIN_GROUP = os.getenv('MAIN_GROUP')
 ADMIN_ID = '15629174'
-BASE_URL = 'https://api.groupme.com/v3/'
+BASE_URL = 'https://api.groupme.com/v3'
 
 app = Flask(__name__)
 
