@@ -6,8 +6,6 @@ Created on Tue Dec  8 12:41:20 2020
 """
 import os
 import sys
-import json
-import psycopg2
 
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
