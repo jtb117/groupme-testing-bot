@@ -32,7 +32,7 @@ def webhook():
 
 def send_message(data):
   url  = BASE_URL+'bots/post'
-  log(f'message sent: {data["text"]}')
+  log(f'message sent: {data}')
   request = Request(url, urlencode(data).encode())
   js = urlopen(request).read().decode()
   
