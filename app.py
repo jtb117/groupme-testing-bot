@@ -73,7 +73,6 @@ def not_found():
 def _get_members():
     member_dict = {}
     response = make_request('groups',{'id':MAIN_GROUP})
-    print(response)
     if response.status_code == 200:
         groups_data = response.json()['response']
         for group in groups_data:
@@ -84,7 +83,8 @@ def _get_members():
                     del entry['user_id']
                     member_dict[member_id] = entry
         return member_dict
-    return None
+    else :
+        log('Response: '+str(response.status_code))
 
 def log(msg):
   print(str(msg))
