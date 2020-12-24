@@ -21,6 +21,7 @@ def webhook():
   data = request.get_json()
   user_id = data['user_id']
   if user_id == ADMIN_ID:
+      log(f'User id: {user_id} and admin id: {ADMIN_ID}')
       msg = data['text']
       if "@bot" in msg:
           send_message("What's good")
