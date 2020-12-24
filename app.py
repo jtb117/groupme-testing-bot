@@ -12,7 +12,7 @@ from urllib.request import Request, urlopen
 from flask import Flask, request
 
 BOT_ID = os.getenv('GROUPME_BOT_ID')
-ADMIN_ID = 15629174
+ADMIN_ID = '15629174'
 
 app = Flask(__name__)
 
