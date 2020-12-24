@@ -12,14 +12,15 @@ from urllib.request import Request, urlopen
 from flask import Flask, request
 
 BOT_ID = os.getenv('GROUPME_BOT_ID')
+ADMIN_ID = 15629174
 
 app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
 def webhook():
   data = request.get_json()
-  sender = data['name']
-  if sender == 'JT':
+  user_id = data['user_id']
+  if user_id == ADMIN_ID:
       msg = data['text']
       if "@bot" in msg:
           print("What's good")
