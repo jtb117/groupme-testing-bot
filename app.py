@@ -6,6 +6,7 @@ Created on Tue Dec  8 12:41:20 2020
 """
 import os
 import sys
+import requests
 
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -24,7 +25,7 @@ def webhook():
   data = request.get_json()
   user_id = data['user_id']
   if user_id == ADMIN_ID:
-      if "@bot" in msg:
+      if "@bot" in data['text']:
           find_call(data)
   log('Recieved {}'.format(data))
   return "ok", 200
