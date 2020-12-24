@@ -24,10 +24,9 @@ app = Flask(__name__)
 def webhook():
   data = request.get_json()
   user_id = data['user_id']
-  if user_id == ADMIN_ID:
-      if "@bot" in data['text']:
-          find_call(data)
-          log('===============FINDING CALL===============')
+  if "@bot" in data['text']:
+      find_call(data)
+      log('===============FINDING CALL===============')
   log('Recieved {}'.format(data))
   return "ok", 200
 
