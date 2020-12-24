@@ -23,7 +23,7 @@ def webhook():
   if user_id == ADMIN_ID:
       msg = data['text']
       if "@bot" in msg:
-          print("What's good")
+          send_message("What's good")
   log('Recieved {}'.format(data))
   return "ok", 200
 
