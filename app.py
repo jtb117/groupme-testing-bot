@@ -37,6 +37,8 @@ def send_message(data):
   
 def make_request(resource, payload):
     url = f'{BASE_URL}/{resource}?token={TOKEN}'
+    print(url)
+    print(payload)
     return requests.get(url=url, params=payload)
   
 def find_call(data):
@@ -62,10 +64,10 @@ def mention_all():
 
 def not_found():
     data = {
-        'bot_id' : BOT_ID
+        'bot_id' : BOT_ID,
         'text': 'Huh?'
         }
-    send_message(not_found)
+    send_message(data)
     
 def _get_members():
     member_dict = {}
