@@ -33,8 +33,8 @@ def webhook():
 def send_message(data):
   url  = BASE_URL+'bots/post'
   log(f'message sent: {data}')
-  request = Request(url, urlencode(data).encode())
-  js = urlopen(request).read().decode()
+  request = requests.post(url, json=data)
+  #js = urlopen(request).read().decode()
   
 def make_request(resource, payload):
     url = f'{BASE_URL}/{resource}?token={TOKEN}'
@@ -46,8 +46,8 @@ def make_request(resource, payload):
     return response
   
 def find_call(data):
-    msg = data['text']
-    if '@all' in msg:
+    msg = data["text"]
+    if "@all" in msg:
         mention_all()
     else:
         not_found()
@@ -55,36 +55,44 @@ def find_call(data):
 def mention_all():
     members = _get_members()
     if members:
-        data = {'bot_id' : BOT_ID}
-        text = ''
+        data = {"bot_id" : BOT_ID}
+        text = ""
         attachments = []
-        attach_dict = {'type':'mentions', 'user_ids':[]}
+        loci = []
+        walker = 1
+        attach_dict = {"type":"mentions", "user_ids":[]}
         for mem in members:
-            text += ' @'
-            text += members[mem]['nickname']
-            attach_dict['user_ids'].append(mem)
-        data['text'] = text
-        data['attachments'] = attachments
+            text += " @"
+            nickname = members[mem]["nickname"]
+            l = [walker, len(nickname)+1]
+            text += nickname
+            walker += len(nickname) + 2
+            attach_dict["user_ids"].append(mem)
+            loci.append(l)
+        attach_dict["loci"] = loci
+        attachments.append(attach_dict)
+        data["text"] = text
+        data["attachments"] = attachments
         send_message(data)
 
 def not_found():
     data = {
-        'bot_id' : BOT_ID,
-        'text': 'Huh?'
+        "bot_id" : BOT_ID,
+        "text": "Huh?"
         }
     send_message(data)
     
 def _get_members():
     member_dict = {}
-    response = make_request('groups',{'id':MAIN_GROUP})
+    response = make_request('groups',{"id":MAIN_GROUP})
     if response.status_code == 200:
-        groups_data = response.json()['response']
+        groups_data = response.json()["response"]
         for group in groups_data:
             if group['id'] == MAIN_GROUP:
-                for member in group['members']:
+                for member in group["members"]:
                     entry = member
-                    member_id = entry['user_id']
-                    del entry['user_id']
+                    member_id = entry["user_id"]
+                    del entry["user_id"]
                     member_dict[member_id] = entry
         return member_dict
     return None
