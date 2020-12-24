@@ -39,10 +39,10 @@ def send_message(data):
 def make_request(resource, payload):
     url = f'{BASE_URL}/{resource}?token={TOKEN}'
     response = requests.get(url=url, params=payload)
-    log(f'Request to GroupMe: \n\t'+
-        'url: {url}\n\t'+
-        'payload: {payload}\n\t'+
-        'status: {str(response.status_code)}')
+    log('Request to GroupMe: \n\t'+
+        f'url: {url}\n\t'+
+        f'payload: {payload}\n\t'+
+        f'status: {str(response.status_code)}')
     return response
   
 def find_call(data):
