@@ -38,9 +38,9 @@ def send_message(data):
   
 def make_request(resource, payload):
     url = f'{BASE_URL}/{resource}?token={TOKEN}'
-    print(url)
-    print(payload)
-    return requests.get(url=url, params=payload)
+    response = requests.get(url=url, params=payload)
+    log(f'Request to GroupMe: {str(response.status_code)}')
+    return response
   
 def find_call(data):
     msg = data['text']
@@ -51,17 +51,18 @@ def find_call(data):
         
 def mention_all():
     members = _get_members()
-    data = {'bot_id' : BOT_ID}
-    text = ''
-    attachments = []
-    attach_dict = {'type':'mentions', 'user_ids':[]}
-    for mem in members:
-        text += ' @'
-        text += members[mem]['nickname']
-        attach_dict['user_ids'].append(mem)
-    data['text'] = text
-    data['attachments'] = attachments
-    send_message(data)
+    if members:
+        data = {'bot_id' : BOT_ID}
+        text = ''
+        attachments = []
+        attach_dict = {'type':'mentions', 'user_ids':[]}
+        for mem in members:
+            text += ' @'
+            text += members[mem]['nickname']
+            attach_dict['user_ids'].append(mem)
+        data['text'] = text
+        data['attachments'] = attachments
+        send_message(data)
 
 def not_found():
     data = {
@@ -83,8 +84,7 @@ def _get_members():
                     del entry['user_id']
                     member_dict[member_id] = entry
         return member_dict
-    else :
-        log('Response: '+str(response.status_code))
+    return None
 
 def log(msg):
   print(str(msg))
