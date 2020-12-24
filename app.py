@@ -27,11 +27,12 @@ def webhook():
   if user_id == ADMIN_ID:
       if "@bot" in data['text']:
           find_call(data)
+          log('===============FINDING CALL===============')
   log('Recieved {}'.format(data))
   return "ok", 200
 
 def send_message(data):
-  url  = BASE_URL+'bots/post'
+  url  = BASE_URL+'/bots/post'
   log(f'message sent: {data}')
   request = requests.post(url, json=data)
   #js = urlopen(request).read().decode()
