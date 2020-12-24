@@ -34,6 +34,7 @@ def send_message(msg):
           'bot_id' : BOT_ID,
           'text'   : msg,
          }
+  log(f'message sent: {msg}')
   request = Request(url, urlencode(data).encode())
   js = urlopen(request).read().decode()
   
