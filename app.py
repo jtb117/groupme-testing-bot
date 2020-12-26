@@ -2,39 +2,44 @@
 """
 Created on Tue Dec  8 12:41:20 2020
 
-@author: James
+@author: James Brennan
 """
 import os
 import sys
 import requests
 
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+import pandas as pd
+import psycopg2
 from flask import Flask, request
+
+from constants import DB_QUERIES, BASE_URL
 
 BOT_ID = os.getenv('GROUPME_BOT_ID')
 TOKEN = os.getenv('TOKEN')
 MAIN_GROUP = os.getenv('MAIN_GROUP')
-ADMIN_ID = '15629174'
-BASE_URL = 'https://api.groupme.com/v3'
+ADMIN_ID = os.getenv('ADMIN_ID')
+
+DATABASE_URL = os.getenv('DATABASE_URL')
+CONN = psycopg2.connect(DATABASE_URL, sslmode='require')
+
 
 app = Flask(__name__)
 
+# Enter here
 @app.route('/', methods=['POST'])
 def webhook():
   data = request.get_json()
-  user_id = data['user_id']
   if "@bot" in data['text']:
       find_call(data)
       log('===============FINDING CALL===============')
-  log('Recieved {}'.format(data))
+  CONN.close()
   return "ok", 200
 
 def send_message(data):
   url  = BASE_URL+'/bots/post'
   log(f'message sent: {data}')
   request = requests.post(url, json=data)
-  #js = urlopen(request).read().decode()
+  return request
   
 def make_request(resource, payload):
     url = f'{BASE_URL}/{resource}?token={TOKEN}'
@@ -46,21 +51,37 @@ def make_request(resource, payload):
     return response
   
 def find_call(data):
-    msg = data["text"]
-    if "@all" in msg:
+    text = data["text"]
+    # commands
+    if   "!all" in text:
         mention_all()
+    elif "!remember" in text:
+        remember(data)
+    elif "!forget" in text:
+        pass#forget(data)
     else:
-        not_found()
+        # triggers
+        check_triggers(text)
+        # none of the above
+        command_not_found()
+        
+def basic_message(msg):
+    data = {
+        "bot_id" : BOT_ID,
+        "text": msg
+    }
+    send_message(data)
         
 def mention_all():
     members = _get_members()
     if members:
+        # Initialize
         data = {"bot_id" : BOT_ID}
         text = ""
-        attachments = []
-        loci = []
+        attachments, loci = []
         walker = 1
         attach_dict = {"type":"mentions", "user_ids":[]}
+        # Work 
         for mem in members:
             text += " @"
             nickname = members[mem]["nickname"]
@@ -74,13 +95,47 @@ def mention_all():
         data["text"] = text
         data["attachments"] = attachments
         send_message(data)
+        
+def remember(data):
+    text = data['text']
+    command = text[15:].split('::')
+    if len(command != 2):
+        msg = "Invalid format -.-"
+    else : 
+        trig  = command[0]
+        response = command[1]
+        if not _pr_table_exists():
+            _execute_query(DB_QUERIES["CREATE_PR_TABLE"])
+        qry = DB_QUERIES["PR_INSERT"].format(trig, response)
+        _execute_query(qry)
+        msg = f'"@bot {trig}" will now trigger "{response}"'
+    basic_message(msg)
+        
+# def forget(data):
+#     text = data['text']
+#     trig = msg[13:]
+#     if df:
+#         df.drop(trig)
+#         _update_table(df)
+#         msg = f'Just forgot all about "{trig}"'
+#     else:
+#         msg = 'Sorry boss, no saved data to forget.'
+#     basic_message(msg)
 
-def not_found():
-    data = {
-        "bot_id" : BOT_ID,
-        "text": "Huh?"
-        }
-    send_message(data)
+def check_triggers(text):
+    trig_list = _execute_query(DB_QUERIES["GET_TRIGS"])
+    msg = ''
+    for t in trig_list:
+        trig = t[0]
+        if trig in text:
+            if len(msg) > 0:
+                msg += '\n'
+            msg += _get_response(trig)
+    if len(msg) > 0:
+        basic_message(msg)
+        
+def command_not_found():
+    basic_message("Huh?")
     
 def _get_members():
     member_dict = {}
@@ -96,6 +151,27 @@ def _get_members():
                     member_dict[member_id] = entry
         return member_dict
     return None
+
+def _get_response(trig):
+    qry = DB_QUERIES["GET_REPLY"].format(trig)
+    return _execute_query(qry)[0][0]
+
+# SQL Functions 
+def _pr_table_exists():
+    exist = _execute_query(DB_QUERIES["PR_TABLE_EXISTS"])
+    return exist[0]
+
+def _execute_query(query):
+    try:
+        cur = CONN.cursor()
+        cur.execute(query)
+        ret = cur.fetchall()
+        cur.close()
+        CONN.commit()
+        if ret : log(ret)
+        return ret
+    except Exception as err:
+        log(err)
 
 def log(msg):
   print(str(msg))
