@@ -126,7 +126,7 @@ def check_triggers(text):
     if trig_list:
         for t in trig_list:
             trig = t[0]
-            if trig in text:
+            if trig == text:
                 if len(msg) > 0:
                     msg += '\n'
                 msg += _get_response(trig)
@@ -163,6 +163,7 @@ def _execute_query(query):
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
+        log(str({"query_executed":query}))
         cur.execute(query)
         ret = cur.fetchall()
         cur.close()
