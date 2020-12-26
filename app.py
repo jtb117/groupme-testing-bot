@@ -30,6 +30,10 @@ def webhook():
   if "@bot" in data['text']:
       find_call(data)
       log('===============FINDING CALL===============')
+  else:
+      msg = check_triggers(data['text'])
+      if len(msg) > 0:
+          basic_message(msg)
   return "ok", 200
 
 def send_message(data):
@@ -57,13 +61,7 @@ def find_call(data):
     elif "!forget" in text:
         pass#forget(data)
     else:
-        # triggers
-        msg = check_triggers(text)
-        if len(msg) > 0:
-            basic_message(msg)
-        else :
-            # none of the above
-            command_not_found()
+        command_not_found()
         
 def basic_message(msg):
     data = {
@@ -108,7 +106,7 @@ def remember(data):
             _execute_query(DB_QUERIES["CREATE_PR_TABLE"])
         qry = DB_QUERIES["PR_INSERT"].format(trig, response)
         _execute_query(qry)
-        msg = f'"@bot {trig}" will now trigger "{response}"'
+        msg = f'"{trig}" will now trigger "{response}"'
     basic_message(msg)
         
 # def forget(data):
