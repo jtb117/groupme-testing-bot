@@ -127,12 +127,13 @@ def remember(data):
 def check_triggers(text):
     trig_list = _execute_query(DB_QUERIES["GET_TRIGS"])
     msg = ''
-    for t in trig_list:
-        trig = t[0]
-        if trig in text:
-            if len(msg) > 0:
-                msg += '\n'
-            msg += _get_response(trig)
+    if trig_list:
+        for t in trig_list:
+            trig = t[0]
+            if trig in text:
+                if len(msg) > 0:
+                    msg += '\n'
+                msg += _get_response(trig)
     return msg        
         
 def command_not_found():
@@ -169,8 +170,9 @@ def _execute_query(query):
         ret = cur.fetchall()
         cur.close()
         CONN.commit()
-        if ret : log(ret)
-        return ret
+        if ret : 
+            log(ret)
+            return ret
     except Exception as err:
         log(err)
 
