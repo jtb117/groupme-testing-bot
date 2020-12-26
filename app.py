@@ -19,7 +19,6 @@ MAIN_GROUP = os.getenv('MAIN_GROUP')
 ADMIN_ID = os.getenv('ADMIN_ID')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-CONN = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 
 app = Flask(__name__)
@@ -31,7 +30,6 @@ def webhook():
   if "@bot" in data['text']:
       find_call(data)
       log('===============FINDING CALL===============')
-  CONN.close()
   return "ok", 200
 
 def send_message(data):
@@ -165,11 +163,13 @@ def _pr_table_exists():
 
 def _execute_query(query):
     try:
-        cur = CONN.cursor()
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cur = conn.cursor()
         cur.execute(query)
         ret = cur.fetchall()
         cur.close()
-        CONN.commit()
+        conn.commit()
+        conn.close()
         if ret : 
             log(ret)
             return ret
