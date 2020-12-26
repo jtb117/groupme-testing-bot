@@ -163,17 +163,17 @@ def _execute_query(query):
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
-        log(str({"query_executed":query}))
+        log({"query_executed":query})
         cur.execute(query)
         ret = cur.fetchall()
         cur.close()
         conn.commit()
         conn.close()
         if ret : 
-            log(ret)
+            log({"query returned":ret})
             return ret
     except Exception as err:
-        log(err)
+        log({"Error":err})
 
 def log(msg):
   print(str(msg))
