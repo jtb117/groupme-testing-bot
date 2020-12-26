@@ -61,7 +61,9 @@ def find_call(data):
         pass#forget(data)
     else:
         # triggers
-        check_triggers(text)
+        msg = check_triggers(text)
+        if len(msg) > 0:
+            basic_message(msg)        
         # none of the above
         command_not_found()
         
@@ -131,8 +133,7 @@ def check_triggers(text):
             if len(msg) > 0:
                 msg += '\n'
             msg += _get_response(trig)
-    if len(msg) > 0:
-        basic_message(msg)
+    return msg        
         
 def command_not_found():
     basic_message("Huh?")
