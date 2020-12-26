@@ -160,20 +160,21 @@ def _pr_table_exists():
     return exist[0]
 
 def _execute_query(query):
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cur = conn.cursor()
-        log({"query_executed":query})
-        cur.execute(query)
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = conn.cursor()
+    log({"query_executed":query})
+    cur.execute(query)
+    ret = None
+    try : 
         ret = cur.fetchall()
-        cur.close()
-        conn.commit()
-        conn.close()
-        if ret : 
-            log({"query returned":ret})
-            return ret
     except Exception as err:
         log({"Error":err})
+    cur.close()
+    conn.commit()
+    conn.close()
+    if ret : 
+        log({"query returned":ret})
+        return ret
 
 def log(msg):
   print(str(msg))
