@@ -62,7 +62,8 @@ def find_call(data):
         # triggers
         msg = check_triggers(text)
         if len(msg) > 0:
-            basic_message(msg)        
+            basic_message(msg)
+        else :
         # none of the above
         command_not_found()
         
@@ -100,7 +101,7 @@ def mention_all():
 def remember(data):
     text = data['text']
     command = text[15:].split('::')
-    if len(command != 2):
+    if len(command) != 2:
         msg = "Invalid format -.-"
     else : 
         trig  = command[0]
