@@ -78,7 +78,7 @@ def mention_all():
         # Initialize
         data = {"bot_id" : BOT_ID}
         text = ""
-        attachments, loci = []
+        attachments, loci = [], []
         walker = 1
         attach_dict = {"type":"mentions", "user_ids":[]}
         # Work 
