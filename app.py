@@ -7,20 +7,24 @@ Created on Tue Dec  8 12:41:20 2020
 import os
 import sys
 import requests
-
+import boto3
 import psycopg2
+import pandas as pd
+from matplotlib import pyplot as plt
+
 from flask import Flask, request
 
-from constants import DB_QUERIES, BASE_URL
+from constants import DB_QUERIES, BASE_URL, IMAGE_URL, HEADERS, ID_TO_NAME, 
+IMAGE_SEND_BODY
 
+AWS_KEY_ID = os.getenv('AWS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 BOT_ID = os.getenv('GROUPME_BOT_ID')
-GM_BOT_ID = '850624'
 TOKEN = os.getenv('TOKEN')
 MAIN_GROUP = os.getenv('MAIN_GROUP')
 ADMIN_ID = os.getenv('ADMIN_ID')
-
 DATABASE_URL = os.getenv('DATABASE_URL')
-
+GM_BOT_ID = '850624'
 
 app = Flask(__name__)
 
@@ -64,6 +68,8 @@ def find_call(data):
         forget(data)
     elif "!triggers" in text:
         print_triggers()
+    elif "!likes" in text:
+        show_likes()
     else:
         command_not_found()
         
@@ -146,7 +152,16 @@ def print_triggers():
     if len(msg) > 0 : msg = msg[:-2]
     log("Printing triggers")
     basic_message(msg)
-        
+    
+def show_likes():
+    df = _get_likes()
+    _save_likes_figure(df)
+    img_url = _upload_image('message_counts.png')
+    post_body = IMAGE_SEND_BODY
+    post_body['bot_id'] = BOT_ID
+    post_body['attachments'][0]['url'] = img_url
+    send_message(post_body)
+    
 def command_not_found():
     basic_message("Huh?")
     
@@ -168,6 +183,51 @@ def _get_members():
 def _get_response(trig):
     qry = DB_QUERIES["GET_REPLY"].format(trig)
     return _execute_query(qry)[0][0]
+
+# Returns dataframe with
+#  index: sender_id
+#  cols:  message_count, name
+def _get_likes():
+    df = _get_full_chat()
+    mc = pd.DataFrame(df.groupby('sender_id').count().attachments)
+    mc.rename(columns={'attachments':'mcount'}, inplace=True)
+    id2name = pd.DataFrame(data=ID_TO_NAME.values(),index=ID_TO_NAME.keys())
+    mc['name'] = id2name
+    mc = mc[['name','mcount']]
+    mc = mc.drop(labels=['calendar','system'])
+    mc = mc.sort_values(by='mcount', ascending=False)
+    return mc
+
+def _save_likes_figure(mc):
+    mc.drop(mc[mc['mcount'] < 400].index, inplace=True)
+    plt.bar(mc['name'],mc['mcount'])
+    plt.xticks(rotation=90)
+    plt.title('Message Counts by Fella')
+    plt.xlabel('Fella Name')
+    plt.ylabel('Number of Messages')
+    plt.savefig('message_counts.png')
+    
+def _upload_image(filename):
+    url = IMAGE_URL+'/pictures'
+    headers = HEADERS
+    headers['x-access-token'] = TOKEN
+    img_url = ''
+    with open(filename, 'rb') as f:
+        response = requests.post(
+            url, data=f.read(), json=TOKEN, headers=headers)
+        img_url = response.json()['payload']['url']
+    return img_url
+    
+def _get_full_chat():
+    s3 = boto3.resource(
+        service_name='s3',
+        region_name='us-east-2',
+        aws_access_key_id=AWS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+    )
+    obj = s3.Object('groupme-bot','full_text.pickle')
+    df = pd.read_pickle(io.BytesIO(obj.get()['Body'].read()))
+    return df
 
 # SQL Functions 
 def _get_triggers():
