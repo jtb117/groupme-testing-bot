@@ -139,7 +139,11 @@ def check_triggers(text):
     return msg
 
 def print_triggers():
-    msg = _get_triggers()
+    trig_list = _get_triggers()
+    msg = ''
+    for trig in trig_list:
+        msg += trig + ", "
+    if len(msg) > 0 : msg = msg[:-2]
     log("Printing triggers")
     basic_message(msg)
         
