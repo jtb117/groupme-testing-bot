@@ -62,6 +62,8 @@ def find_call(data):
         remember(data)
     elif "!forget" in text:
         forget(data)
+    elif "!triggers" in text:
+        print_triggers()
     else:
         command_not_found()
         
@@ -104,6 +106,7 @@ def remember(data):
     else : 
         trig  = command[0]
         response = command[1]
+        old_trig = trig
         if not _pr_table_exists():
             _execute_query(DB_QUERIES["CREATE_PR_TABLE"])
         if "'" in trig:
@@ -111,7 +114,7 @@ def remember(data):
             trig  = trig[:start] + "'" + trig[start:]
         qry = DB_QUERIES["PR_INSERT"].format(trig, response)
         _execute_query(qry)
-        msg = f'"{trig}" will now trigger "{response}"'
+        msg = f'"{old_trig}" will now trigger "{response}"'
     basic_message(msg)
         
 def forget(data):
@@ -133,7 +136,12 @@ def check_triggers(text):
             if len(msg) > 0:
                 msg += '\n'
             msg += _get_response(trig)
-    return msg        
+    return msg
+
+def print_triggers():
+    msg = _get_triggers()
+    log("Printing triggers")
+    basic_message(msg)
         
 def command_not_found():
     basic_message("Huh?")
