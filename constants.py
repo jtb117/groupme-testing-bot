@@ -73,13 +73,13 @@ IMAGE_URL = 'https://image.groupme.com'
 HEADERS   = {'content-type': 'application/json',
              'x-access-token': None}
 
-{
-  "bot_id"  : "j5abcdefg",
-  "text"    : "Hello world",
-  "attachments" : [
-    {
-      "type"  : "image",
-      "url"   : "https://i.groupme.com/somethingsomething.large"
+IMAGE_SEND_BODY = {
+        "bot_id": None,
+        "text": "Here is your graph",
+        "attachments":[
+            {
+            "type":"image",
+            "url": None
+            }
+        ]
     }
-  ]
-}
