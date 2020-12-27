@@ -14,6 +14,7 @@ from flask import Flask, request
 from constants import DB_QUERIES, BASE_URL
 
 BOT_ID = os.getenv('GROUPME_BOT_ID')
+GM_BOT_ID = '850624'
 TOKEN = os.getenv('TOKEN')
 MAIN_GROUP = os.getenv('MAIN_GROUP')
 ADMIN_ID = os.getenv('ADMIN_ID')
@@ -31,9 +32,10 @@ def webhook():
       find_call(data)
       log('===============FINDING CALL===============')
   else:
-      msg = check_triggers(data['text'])
-      if len(msg) > 0:
-          basic_message(msg)
+      if data['sender_id'] != GM_BOT_ID:
+          msg = check_triggers(data['text'])
+          if len(msg) > 0:
+              basic_message(msg)
   return "ok", 200
 
 def send_message(data):
