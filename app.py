@@ -9,6 +9,7 @@ import sys
 import requests
 import boto3
 import psycopg2
+import io
 import pandas as pd
 from matplotlib import pyplot as plt
 
