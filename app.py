@@ -107,7 +107,7 @@ def remember(data):
         if not _pr_table_exists():
             _execute_query(DB_QUERIES["CREATE_PR_TABLE"])
         if "'" in trig:
-            start = s.find("'")
+            start = trig.find("'")
             trig  = trig[:start] + "'" + trig[start:]
         qry = DB_QUERIES["PR_INSERT"].format(trig, response)
         _execute_query(qry)
