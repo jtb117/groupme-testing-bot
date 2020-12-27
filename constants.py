@@ -27,6 +27,9 @@ DB_QUERIES = {
         """,
         "GET_REPLY" : """
             SELECT response FROM predfined_responses WHERE trig = '{}';
+        """,
+        "DEL_TRIG"  : """
+            DELETE FROM predfined_responses WHERE trig = '{}';
         """
     }
 

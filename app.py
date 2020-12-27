@@ -111,16 +111,13 @@ def remember(data):
         msg = f'"{trig}" will now trigger "{response}"'
     basic_message(msg)
         
-# def forget(data):
-#     text = data['text']
-#     trig = msg[13:]
-#     if df:
-#         df.drop(trig)
-#         _update_table(df)
-#         msg = f'Just forgot all about "{trig}"'
-#     else:
-#         msg = 'Sorry boss, no saved data to forget.'
-#     basic_message(msg)
+def forget(data):
+    text = data['text']
+    trig = text[13:]
+    qry  = DB_QUERIES['DEL_TRIG'].format(trig)
+    _execute_query(qry)
+    msg = f'Removed "{trig}"'
+    basic_message(msg)
 
 def check_triggers(text):
     trig_list = _execute_query(DB_QUERIES["GET_TRIGS"])
