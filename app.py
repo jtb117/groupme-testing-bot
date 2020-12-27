@@ -14,8 +14,7 @@ from matplotlib import pyplot as plt
 
 from flask import Flask, request
 
-from constants import DB_QUERIES, BASE_URL, IMAGE_URL, HEADERS, ID_TO_NAME, 
-IMAGE_SEND_BODY
+from constants import DB_QUERIES, BASE_URL, IMAGE_URL, HEADERS, ID_TO_NAME, IMAGE_SEND_BODY
 
 AWS_KEY_ID = os.getenv('AWS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
