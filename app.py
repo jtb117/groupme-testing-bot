@@ -67,7 +67,7 @@ def find_call(data):
         forget(data)
     elif "!triggers" in text:
         print_triggers()
-    elif "!likes" in text:
+    elif "!messagecount" in text:
         show_likes()
     else:
         command_not_found()
