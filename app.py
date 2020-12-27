@@ -125,8 +125,7 @@ def forget(data):
 def check_triggers(text):
     trig_list = _get_triggers()
     msg = ''
-    for t in trig_list:
-        trig = t[0]
+    for trig in trig_list:
         if trig.lower() == text.lower():
             if len(msg) > 0:
                 msg += '\n'
@@ -158,7 +157,11 @@ def _get_response(trig):
 # SQL Functions 
 def _get_triggers():
     trig_list = _execute_query(DB_QUERIES["GET_TRIGS"])
-    return trig_list if trig_list else []
+    return_list = []
+    if trig_list:
+        for trig in trig_list:
+            return_list.append(trig[0])
+    return return_list
 
 def _pr_table_exists():
     exist = _execute_query(DB_QUERIES["PR_TABLE_EXISTS"])
