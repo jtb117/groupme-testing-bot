@@ -128,7 +128,7 @@ def check_triggers(text):
     if trig_list:
         for t in trig_list:
             trig = t[0]
-            if trig == text:
+            if trig.lower() == text.lower():
                 if len(msg) > 0:
                     msg += '\n'
                 msg += _get_response(trig)
