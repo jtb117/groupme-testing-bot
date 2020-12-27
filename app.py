@@ -61,7 +61,7 @@ def find_call(data):
     elif "!remember" in text:
         remember(data)
     elif "!forget" in text:
-        pass#forget(data)
+        forget(data)
     else:
         command_not_found()
         
@@ -114,21 +114,23 @@ def remember(data):
 def forget(data):
     text = data['text']
     trig = text[13:]
-    qry  = DB_QUERIES['DEL_TRIG'].format(trig)
-    _execute_query(qry)
-    msg = f'Removed "{trig}"'
+    trig_list = _get_triggers()
+    if trig in trig_list:
+        qry  = DB_QUERIES['DEL_TRIG'].format(trig)
+        _execute_query(qry)
+        msg = f'Removed "{trig}"'
+    else : msg = f'Trigger "{trig}" does not exist.'
     basic_message(msg)
 
 def check_triggers(text):
-    trig_list = _execute_query(DB_QUERIES["GET_TRIGS"])
+    trig_list = _get_triggers()
     msg = ''
-    if trig_list:
-        for t in trig_list:
-            trig = t[0]
-            if trig.lower() == text.lower():
-                if len(msg) > 0:
-                    msg += '\n'
-                msg += _get_response(trig)
+    for t in trig_list:
+        trig = t[0]
+        if trig.lower() == text.lower():
+            if len(msg) > 0:
+                msg += '\n'
+            msg += _get_response(trig)
     return msg        
         
 def command_not_found():
@@ -154,6 +156,10 @@ def _get_response(trig):
     return _execute_query(qry)[0][0]
 
 # SQL Functions 
+def _get_triggers():
+    trig_list = _execute_query(DB_QUERIES["GET_TRIGS"])
+    return trig_list if trig_list else []
+
 def _pr_table_exists():
     exist = _execute_query(DB_QUERIES["PR_TABLE_EXISTS"])
     return exist[0]
