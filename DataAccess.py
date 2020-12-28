@@ -9,11 +9,12 @@ import boto3
 import os
 import pandas as pd
 import io
-from constants import DB_QUERIES, DATABASE_URL, S3_BUCKET
+from constants import DB_QUERIES, S3_BUCKET
 from app import log
 
 class DataAccess():
-    def __init__(self):
+    def __init__(self, db_url):
+        self.db_url = db_url
         self._aws_key_id = os.getenv('AWS_KEY_ID')
         self._aws_secret_key = os.getenv('AWS_SECRET_ACCESS_KEY')
         self.s3 = self._get_s3()
@@ -70,7 +71,7 @@ class DataAccess():
         return exist[0]
     
     def execute_query(self, query):
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        conn = psycopg2.connect(self.db_url, sslmode='require')
         cur = conn.cursor()
         log({"query_executed":query})
         cur.execute(query)
