@@ -72,7 +72,6 @@ BASE_URL  = 'https://api.groupme.com/v3'
 IMAGE_URL = 'https://image.groupme.com'
 HEADERS   = {'content-type': 'application/json',
              'x-access-token': None}
-
 IMAGE_SEND_BODY = {
         "bot_id": None,
         "text": "Here is your graph",
@@ -83,3 +82,6 @@ IMAGE_SEND_BODY = {
             }
         ]
     }
+
+# Other
+S3_BUCKET = 'groupme-bot'
