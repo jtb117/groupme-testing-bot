@@ -63,7 +63,7 @@ def make_request(resource, payload):
 def find_call(data):
     text = data["text"][5:]
     global data_access
-    data_access = DataAccess()
+    data_access = DataAccess(DATABASE_URL)
     # commands
     if   "!all" == text:
         mention_all()

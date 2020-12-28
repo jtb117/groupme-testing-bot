@@ -10,7 +10,7 @@ import os
 import pandas as pd
 import io
 from constants import DB_QUERIES, S3_BUCKET
-from app import log
+from app import _log
 
 class DataAccess():
     def __init__(self, db_url):
