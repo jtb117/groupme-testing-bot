@@ -193,6 +193,9 @@ def update_data():
     updated_df = updated_df.sort_values(by='created_at')
     # upload combined data
     data_access.upload_df(updated_df, 'full_text')
+    msg = 'Updated S3 data from {end_of_old} to {recent_start}'
+    basic_message(msg)
+    _log(msg)
     
 def command_not_found():
     basic_message("Huh?")
