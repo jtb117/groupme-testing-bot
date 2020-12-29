@@ -64,7 +64,7 @@ class DataAccess():
                 return_list.append(trig[0])
         return return_list
     
-    def _get_response(self, trig):
+    def get_response(self, trig):
         qry = DB_QUERIES["GET_REPLY"].format(trig)
         return self.execute_query(qry)[0][0]
     
