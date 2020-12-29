@@ -57,7 +57,7 @@ class DataAccess():
             
     # SQL Functions 
     def get_triggers(self):
-        trig_list = self._execute_query(DB_QUERIES["GET_TRIGS"])
+        trig_list = self.execute_query(DB_QUERIES["GET_TRIGS"])
         return_list = []
         if trig_list:
             for trig in trig_list:
@@ -69,7 +69,7 @@ class DataAccess():
         return self.execute_query(qry)[0][0]
     
     def pr_table_exists(self):
-        exist = self._execute_query(DB_QUERIES["PR_TABLE_EXISTS"])
+        exist = self.execute_query(DB_QUERIES["PR_TABLE_EXISTS"])
         return exist[0]
     
     def execute_query(self, query):
