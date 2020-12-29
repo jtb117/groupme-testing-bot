@@ -35,7 +35,7 @@ class DataAccess():
         obj = s3.Object('groupme-bot',f'full_text.{file_type}')
         if file_type == 'pickle':
             df = pd.read_pickle(io.BytesIO(obj.get()['Body'].read()), 
-                                compression=None)
+                                compression='zip')
         elif file_type == 'json':
             df = pd.read_json(io.BytesIO(obj.get()['Body'].read()),  
                               convert_dates=False, convert_axes=False)
