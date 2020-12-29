@@ -9,8 +9,9 @@ import boto3
 import os
 import pandas as pd
 import io
-from constants import DB_QUERIES, S3_BUCKET
 from app import _log
+from constants import DB_QUERIES, S3_BUCKET
+
 
 class DataAccess():
     def __init__(self, db_url):
@@ -73,16 +74,16 @@ class DataAccess():
     def execute_query(self, query):
         conn = psycopg2.connect(self.db_url, sslmode='require')
         cur = conn.cursor()
-        log({"query_executed":query})
+        _log({"query_executed":query})
         cur.execute(query)
         ret = None
         try : 
             ret = cur.fetchall()
         except Exception as err:
-            log({"Error":err})
+            _log({"Error":err})
         cur.close()
         conn.commit()
         conn.close()
         if ret : 
-            log({"query returned":ret})
+            _log({"query returned":ret})
             return ret

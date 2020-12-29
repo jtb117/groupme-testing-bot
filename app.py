@@ -14,8 +14,8 @@ from matplotlib import pyplot as plt
 
 from flask import Flask, request
 
+import DataAccess
 from constants import DB_QUERIES, BASE_URL, IMAGE_URL, HEADERS, ID_TO_NAME, IMAGE_SEND_BODY
-from DataAccess import DataAccess
 
 AWS_KEY_ID = os.getenv('AWS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -170,6 +170,9 @@ def show_likes():
     send_message(post_body)
     
 def update_data():
+    msg = 'Beginning update data'
+    basic_message(msg)
+    _log(msg)
     # get old data
     old_df = data_access.get_full_chat(file_type='json')
     old_df['created_at'] = pd.to_datetime(old_df['created_at'],unit='ms')
