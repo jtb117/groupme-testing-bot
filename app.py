@@ -27,7 +27,7 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 GM_BOT_ID = '850624'
 GROUP_ID  = '29766648'
 
-data_access = None
+data_access = DataAccess(DATABASE_URL)
 
 app = Flask(__name__)
 
@@ -62,8 +62,6 @@ def make_request(resource, payload):
   
 def find_call(data):
     text = data["text"][5:]
-    global data_access
-    data_access = DataAccess(DATABASE_URL)
     # commands
     if   "!all" == text:
         mention_all()
