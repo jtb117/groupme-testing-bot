@@ -48,7 +48,7 @@ class DataAccess():
     def upload_df(self, df, file_name, extension='.pickle'):
         full_name = file_name+extension
         if extension=='.pickle':
-            df.to_pickle(full_name)
+            df.to_pickle(full_name, compression='zip')
         elif extension=='.json':
             df.to_json(full_name)
         else:
