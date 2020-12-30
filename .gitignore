@@ -1,0 +1,4 @@
+.gitignore
+full_text.pickle
+message_counts.png
+__pycache__

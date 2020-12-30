@@ -235,7 +235,7 @@ def _log(msg):
 # Returns dataframe with
 #  index: sender_id
 #  cols:  message_count, name
-def _get_message_count():
+def _get_message_counts():
     _log('fetching messages')
     df = data_access.get_full_chat()
     mc = pd.DataFrame(df.groupby('sender_id').count().attachments)
