@@ -72,7 +72,7 @@ def find_call(data):
     elif "!triggers" == text:
         print_triggers()
     elif "!message-count" == text:
-        show_likes()
+        show_message_count()
     elif "!update-data" == text:
         update_data()
     else:
@@ -158,8 +158,8 @@ def print_triggers():
     _log("Printing triggers")
     basic_message(msg)
     
-def show_likes():
-    df = _get_likes()
+def show_message_count():
+    df = _get_message_counts()
     _save_likes_figure(df)
     img_url = _upload_image('message_counts.png')
     post_body = IMAGE_SEND_BODY
@@ -235,7 +235,8 @@ def _log(msg):
 # Returns dataframe with
 #  index: sender_id
 #  cols:  message_count, name
-def _get_likes():
+def _get_message_count():
+    _log('fetching messages')
     df = data_access.get_full_chat()
     mc = pd.DataFrame(df.groupby('sender_id').count().attachments)
     mc.rename(columns={'attachments':'mcount'}, inplace=True)
