@@ -11,6 +11,7 @@ import pandas as pd
 import io
 import app
 from constants import DB_QUERIES, S3_BUCKET
+from memory_profiler import profile
 
 
 class DataAccess():
@@ -30,6 +31,7 @@ class DataAccess():
         )
         return s3
     
+    @profile
     def get_full_chat(self, file_type='pickle', time_convert=False):
         s3 = self.s3
         obj = s3.Object('groupme-bot',f'full_text.{file_type}')
