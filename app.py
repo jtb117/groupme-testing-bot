@@ -62,19 +62,18 @@ def make_request(resource, payload):
   
 def find_call(data):
     text = data["text"][5:]
-    # commands
-    if   "!all" == text:
-        mention_all()
-    elif "!remember" == text:
-        remember(data)
-    elif "!forget" == text:
-        forget(data)
-    elif "!triggers" == text:
-        print_triggers()
-    elif "!message-count" == text:
-        show_message_count()
-    elif "!update-data" == text:
-        update_data()
+    command = text.split(' ')[0]
+    if command[0] == '!':
+        calls = {
+            "!all":mention_all,
+            "!remember":remember,
+            "!triggers":print_triggers,
+            "!message-count":show_message_count,
+            "!update-data":update_data
+        }
+        func = calls[command]
+        if func : func()
+        else    : command_not_found()
     else:
         command_not_found()
         
