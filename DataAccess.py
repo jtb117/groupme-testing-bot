@@ -46,6 +46,7 @@ class DataAccess():
                 df['created_at'] = pd.to_datetime(df['created_at'], unit='ms')
                 df.sort_values(by='created_at', inplace=True)
         df.index.name = 'id'
+        app._log('returning chat')
         return df
     
     def upload_df(self, df, file_name, extension='.pickle'):
