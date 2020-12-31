@@ -78,7 +78,6 @@ class DataAccess():
     def execute_query(self, query):
         conn = psycopg2.connect(self.db_url, sslmode='require')
         cur = conn.cursor()
-        app._log({"query_executed":query})
         cur.execute(query)
         ret = None
         try : 

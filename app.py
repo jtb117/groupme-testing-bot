@@ -67,12 +67,13 @@ def find_call(data):
         calls = {
             "!all":mention_all,
             "!remember":remember,
+            "!forget":forget,
             "!triggers":print_triggers,
             "!message-count":show_message_count,
             "!update-data":update_data
         }
         func = calls[command]
-        if func : func()
+        if func : func(data)
         else    : command_not_found()
     else:
         command_not_found()
@@ -84,7 +85,7 @@ def basic_message(msg):
     }
     send_message(data)
         
-def mention_all():
+def mention_all(data):
     members = _get_members()
     if members:
         # Initialize
@@ -148,7 +149,7 @@ def check_triggers(text):
             msg += data_access.get_response(trig)
     return msg
 
-def print_triggers():
+def print_triggers(data):
     trig_list = data_access.get_triggers()
     msg = ''
     for trig in trig_list:
@@ -157,7 +158,7 @@ def print_triggers():
     _log("Printing triggers")
     basic_message(msg)
     
-def show_message_count():
+def show_message_count(data):
     df = _get_message_counts()
     _save_likes_figure(df)
     img_url = _upload_image('message_counts.png')
@@ -166,7 +167,7 @@ def show_message_count():
     post_body['attachments'][0]['url'] = img_url
     send_message(post_body)
     
-def update_data():
+def update_data(data):
     msg = 'Beginning update data'
     basic_message(msg)
     _log(msg)
