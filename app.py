@@ -104,7 +104,7 @@ def basic_message(msg):
     }
     send_message(data)
 
-def fuck_jacob():
+def fuck_jacob(data):
     for i in range(10):
         basic_message('fuck_jacob')
         
