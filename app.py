@@ -3,11 +3,13 @@
 Created on Tue Dec  8 12:41:20 2020
 
 @author: James Brennan
+
+TODO:
+    Pinned messages
 """
 import os
 import sys
 import requests
-import boto3
 import io
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -26,6 +28,7 @@ ADMIN_ID = os.getenv('ADMIN_ID')
 DATABASE_URL = os.getenv('DATABASE_URL')
 GM_BOT_ID = '850624'
 GROUP_ID  = '29766648'
+ALL_DATES = (pd.to_datetime('2010-01-01'), pd.to_datetime('today'))
 
 data_access = DataAccess(DATABASE_URL)
 
@@ -50,6 +53,20 @@ def send_message(data):
   _log(f'message sent: {data}')
   request = requests.post(url, json=data)
   return request
+
+def send_image(img_urls, send=True):
+    post_body = IMAGE_SEND_BODY
+    post_body['bot_id'] = BOT_ID
+    for img in img_urls:
+        post_body['attachments'].append({
+            'type':'image',
+            'url':img
+        })
+    if send: send_message(post_body)
+    return post_body
+
+def send_image_context(post_body):
+    pass
   
 def make_request(resource, payload):
     url = f'{BASE_URL}/{resource}?token={TOKEN}'
@@ -70,7 +87,9 @@ def find_call(data):
             "!forget":forget,
             "!triggers":print_triggers,
             "!message-count":show_message_count,
-            "!update-data":update_data
+            "!update-data":update_data,
+            "!random-pic":get_random_pic,
+            "!fuck-jacob":fuck_jacob,
         }
         func = calls[command]
         if func : func(data)
@@ -84,6 +103,10 @@ def basic_message(msg):
         "text": msg
     }
     send_message(data)
+
+def fuck_jacob():
+    for i in range(10):
+        basic_message('fuck_jacob')
         
 def mention_all(data):
     members = _get_members()
@@ -162,10 +185,8 @@ def show_message_count(data):
     df = _get_message_counts()
     _save_likes_figure(df)
     img_url = _upload_image('message_counts.png')
-    post_body = IMAGE_SEND_BODY
-    post_body['bot_id'] = BOT_ID
-    post_body['attachments'][0]['url'] = img_url
-    send_message(post_body)
+    img_url = [img_url]
+    send_image(img_url)
     
 def update_data(data):
     msg = 'Beginning update data'
@@ -198,8 +219,62 @@ def update_data(data):
     basic_message(msg)
     _log(msg)
     
+def get_random_pic(data):
+    try:
+        # Parameters
+        params = data['text'][17:]
+        params = params.split(' ')
+        threshold = 0
+        start_date = pd.to_datetime('2010-01-01') # TODO: constant
+        end_date = pd.to_datetime('today')
+        if len(params) == 1 and params[0] != '':
+            threshold = params[0]
+        elif len(params) >= 2:
+            threshold = params[0]
+            start_date = pd.to_datetime(params[1])
+        if len(params) == 3:
+            end_date = pd.to_datetime(params[2])
+        if len(params) > 3:
+            raise Exception('Invalid input: '+data['text'])
+        date_range = (start_date, end_date)
+        # Get image
+        img_urls = _get_random_pic(threshold, date_range)
+        send_image(img_urls)
+    except Exception as err:
+        basic_message(err)
+        _log({"error":err})
+    
 def command_not_found():
     basic_message("Huh?")
+    
+def _get_random_pic(threshold=0,date_range=None, context=False):
+    df = data_access.get_full_chat()
+    df = _get_thresholded_imgs_pd(df, threshold, date_range)
+    
+    if context:
+        pass
+    else:
+        attachments = df.sample().attachments[0]
+        img_urls = []
+        for i in attachments:
+            if i['type'] == 'image':
+                img_urls.append(i['url'])
+    return img_urls
+
+def _get_thresholded_imgs_pd(df, threshold, date_range):
+    if not 'num_likes' in df.columns:
+        df = _add_like_count(df)
+    df['is_img'] = df['attachments'].apply(
+        lambda x: True in [i['type']=='image' for i in x])
+    df = df[df['is_img']] 
+    # filter by parameters
+    df = df[df['num_likes'] >= threshold] # df only includes those above threshold
+    df = df[(df['created_at'] > date_range[0]) & (df['created_at'] < date_range[1])]
+    return df
+
+def _add_like_count(df):
+    df['num_likes'] = df['favorited_by'].apply(len)
+    return df
     
 def _get_members():
     member_dict = {}
