@@ -29,17 +29,6 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 GM_BOT_ID = '850624'
 GROUP_ID  = '29766648'
 ALL_DATES = (pd.to_datetime('2010-01-01'), pd.to_datetime('today'))
-CALLS = {
-            "!all":mention_all,
-            "!remember":remember,
-            "!forget":forget,
-            "!triggers":print_triggers,
-            "!message-count":show_message_count,
-            "!update-data":update_data,
-            "!random-pic":get_random_pic,
-            "!fuck-jacob":fuck_jacob,
-            "!commands":commands,
-        }
 
 data_access = DataAccess(DATABASE_URL)
 
@@ -354,3 +343,14 @@ def _upload_image(filename):
         img_url = response.json()['payload']['url']
     return img_url
     
+CALLS = {
+            "!all":mention_all,
+            "!remember":remember,
+            "!forget":forget,
+            "!triggers":print_triggers,
+            "!message-count":show_message_count,
+            "!update-data":update_data,
+            "!random-pic":get_random_pic,
+            "!fuck-jacob":fuck_jacob,
+            "!commands":commands,
+        }
