@@ -29,6 +29,17 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 GM_BOT_ID = '850624'
 GROUP_ID  = '29766648'
 ALL_DATES = (pd.to_datetime('2010-01-01'), pd.to_datetime('today'))
+CALLS = {
+            "!all":mention_all,
+            "!remember":remember,
+            "!forget":forget,
+            "!triggers":print_triggers,
+            "!message-count":show_message_count,
+            "!update-data":update_data,
+            "!random-pic":get_random_pic,
+            "!fuck-jacob":fuck_jacob,
+            "!commands":commands,
+        }
 
 data_access = DataAccess(DATABASE_URL)
 
@@ -81,17 +92,7 @@ def find_call(data):
     text = data["text"][5:]
     command = text.split(' ')[0]
     if command[0] == '!':
-        calls = {
-            "!all":mention_all,
-            "!remember":remember,
-            "!forget":forget,
-            "!triggers":print_triggers,
-            "!message-count":show_message_count,
-            "!update-data":update_data,
-            "!random-pic":get_random_pic,
-            "!fuck-jacob":fuck_jacob,
-        }
-        func = calls[command]
+        func = CALLS[command]
         if func : func(data)
         else    : command_not_found()
     else:
@@ -103,10 +104,21 @@ def basic_message(msg):
         "text": msg
     }
     send_message(data)
+    
+def commands(data):
+    msg = ''
+    for key in CALLS.keys():
+        msg+= key+'\n'
+    basic_message(msg)
 
 def fuck_jacob(data):
-    for i in range(10):
-        basic_message('fuck_jacob')
+    text = data["text"][5:]
+    i = 10
+    if len(text) > 0:
+        try: i = int(text)
+        except: command_not_found()
+    for i in range(i):
+        basic_message('fuck jacob')
         
 def mention_all(data):
     members = _get_members()
