@@ -101,7 +101,7 @@ def commands(data):
     basic_message(msg)
 
 def fuck_jacob(data):
-    text = data["text"][5:]
+    text = data["text"][11:]
     i = 10
     if len(text) > 0:
         try: i = int(text)
@@ -151,6 +151,10 @@ def remember(data):
         data_access.execute_query(qry)
         msg = f'"{old_trig}" will now trigger "{response}"'
     basic_message(msg)
+    
+def program(data):
+    text = data['text'][8:]
+    exec(text)
         
 def forget(data):
     text = data['text']
