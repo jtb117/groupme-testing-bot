@@ -162,7 +162,7 @@ def remember(data):
             start = trig.find("'")
             trig  = trig[:start] + "'" + trig[start:]
         print(trig)
-        print(reponse)
+        print(response)
         qry = DB_QUERIES["PR_INSERT"].format(trig, response)
         data_access.execute_query(qry)
         msg = f'"{old_trig}" will now trigger "{response}"'
