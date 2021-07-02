@@ -24,9 +24,10 @@ class DataAccess():
         self._aws_secret_key = os.getenv('AWS_SECRET_ACCESS_KEY')
         self.s3 = self._get_s3()
     
-    def _log(msg):
+    def _log(self, msg):
         print(str(msg))
         sys.stdout.flush()
+        
     # S3 Functions
     def _get_s3(self):
         s3 = boto3.resource(
