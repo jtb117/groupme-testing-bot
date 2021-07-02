@@ -63,11 +63,17 @@ def send_message(data):
 def send_image(img_urls, send=True, typ='image'):
     post_body = IMAGE_SEND_BODY
     post_body['bot_id'] = BOT_ID
-    for img in img_urls:
+    if type(img_urls) == list:
+        for img in img_urls:
+            post_body['attachments'].append({
+                'type':typ,
+                'url':img
+            })
+    else :
         post_body['attachments'].append({
-            'type':typ,
-            'url':img
-        })
+                'type':typ,
+                'url':img_urls
+            })
     if send: send_message(post_body)
     return post_body
 
