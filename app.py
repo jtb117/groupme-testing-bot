@@ -48,6 +48,8 @@ def webhook():
               flag = msg[-2:]
               if flag == '-i':
                   send_image(msg[:-3])
+              elif flag == '-v':
+                  send_image(msg[:-3], typ='video')
               else:
                   basic_message(msg)
   return "ok", 200
@@ -58,12 +60,12 @@ def send_message(data):
   request = requests.post(url, json=data)
   return request
 
-def send_image(img_urls, send=True):
+def send_image(img_urls, send=True, typ='image'):
     post_body = IMAGE_SEND_BODY
     post_body['bot_id'] = BOT_ID
     for img in img_urls:
         post_body['attachments'].append({
-            'type':'image',
+            'type':typ,
             'url':img
         })
     if send: send_message(post_body)
