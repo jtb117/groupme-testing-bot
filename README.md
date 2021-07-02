@@ -17,3 +17,6 @@ Upcoming features:
   * !pinned - Displays the pinned messages
   * !add-pinned {message} - The *message* will be added to the pinned list.
   * !drop-pinned {index} - Remove a message from the pinned list with the given *index*.
+  * !remember {trigger}::{response} - Add variable within message 
+		* E.g. !remember Hello {}!::Greetings {}!
+			* "Hello John!" from user would trigger "Greetings John!" from bot 

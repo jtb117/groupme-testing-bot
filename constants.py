@@ -41,15 +41,17 @@ ID_TO_NAME = {
 
 # SQL 
 DB_QUERIES = {
+        # General queries
+        "TABLE_EXISTS" : """
+            SELECT EXISTS(
+                SELECT * FROM {}
+            );
+        """,
+        # Trigger/response queries
         "CREATE_PR_TABLE" : """
             CREATE TABLE predfined_responses(
                 trig TEXT PRIMARY KEY NOT NULL,
                 response TEXT NOT NULL
-            );
-        """,
-        "PR_TABLE_EXISTS" : """
-            SELECT EXISTS(
-                SELECT * FROM predfined_responses
             );
         """,
         "PR_INSERT" : """
@@ -64,7 +66,25 @@ DB_QUERIES = {
         """,
         "DEL_TRIG"  : """
             DELETE FROM predfined_responses WHERE trig = '{}';
+        """,
+        # image queries
+        "CREATE_RND_IMG_TABLE" : """
+            CREATE TABLE random_images(
+                img_url TEXT PRIMARY KEY NOT NULL,
+                num_likes INTEGER NOT NULL,
+                created_at TIMESTAMP NOT NULL
+            );
+        """,
+        "GET_IMG_URL" : """
+            SELECT img_url FROM random_images 
+            WHERE   num_likes >= {} and 
+                    created_at >= {};
+        """,
+        "ADD_IMG" : """
+            INSERT INTO random_images(img_url, num_likes, created_at)
+            VALUES ('{}', {}, {})
         """
+        
     }
 
 # API
@@ -74,13 +94,8 @@ HEADERS   = {'content-type': 'application/json',
              'x-access-token': None}
 IMAGE_SEND_BODY = {
         "bot_id": None,
-        "text": "Here is your graph",
-        "attachments":[
-            {
-            "type":"image",
-            "url": None
-            }
-        ]
+        "text": "Here is your image",
+        "attachments":[]
     }
 
 # Other

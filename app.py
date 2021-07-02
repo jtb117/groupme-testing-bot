@@ -45,7 +45,11 @@ def webhook():
       if data['sender_id'] != GM_BOT_ID:
           msg = check_triggers(data['text'])
           if len(msg) > 0:
-              basic_message(msg)
+              flag = msg[-2:]
+              if flag == '-i':
+                  send_image(msg[:-3])
+              else:
+                  basic_message(msg)
   return "ok", 200
 
 def send_message(data):
@@ -155,6 +159,9 @@ def remember(data):
 def program(data):
     text = data['text'][8:]
     exec(text)
+    
+def pinned(data):
+    pass    
         
 def forget(data):
     text = data['text']

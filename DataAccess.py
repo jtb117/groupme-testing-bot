@@ -11,7 +11,7 @@ import pandas as pd
 import io
 from memory_profiler import profile
 
-import app
+from app import ALL_DATES, _log
 from constants import DB_QUERIES, S3_BUCKET
 
 class DataAccess():
@@ -32,10 +32,9 @@ class DataAccess():
         return s3
     
     @profile
-    def get_full_chat(self, file_type='pickle', time_convert=False):
-        app._log('fetching chat')
-        s3 = self.s3
-        obj = s3.Object('groupme-bot',f'full_text.{file_type}')
+    def get_chat_full(self, file_type='pickle', time_convert=False):
+        _log('fetching chat')
+        obj = self.s3.Object(S3_BUCKET,f'full_text.{file_type}')
         if file_type == 'pickle':
             df = pd.read_pickle(io.BytesIO(obj.get()['Body'].read()), 
                                 compression='zip')
@@ -46,8 +45,15 @@ class DataAccess():
                 df['created_at'] = pd.to_datetime(df['created_at'], unit='ms')
                 df.sort_values(by='created_at', inplace=True)
         df.index.name = 'id'
-        app._log('returning chat')
+        _log('returning chat')
         return df
+    
+    def get_chat_chunk(self, num_chunks=5):
+        pass
+    
+    def get_chat_date(self, date_range=ALL_DATES,file_name='full_text.pickle'):
+        obj = self.s3.Object(S3_BUCKET, file_name)
+        
     
     def upload_df(self, df, file_name, extension='.pickle'):
         full_name = file_name+extension
@@ -60,6 +66,7 @@ class DataAccess():
         self.s3.Bucket(S3_BUCKET).upload_file(full_name, full_name)
             
     # SQL Functions 
+    ## Triggers/responses
     def get_triggers(self):
         trig_list = self.execute_query(DB_QUERIES["GET_TRIGS"])
         return_list = []
@@ -71,9 +78,16 @@ class DataAccess():
     def get_response(self, trig):
         qry = DB_QUERIES["GET_REPLY"].format(trig)
         return self.execute_query(qry)[0][0]
-    
-    def pr_table_exists(self):
-        exist = self.execute_query(DB_QUERIES["PR_TABLE_EXISTS"])
+    ## Random image
+    def upload_images(self, df):
+        for ind, row in df.iterrows():
+            qry = DB_QUERIES['ADD_IMG'].format('url', 0, ind)
+            self.execute_query(qry)
+            
+    ## General
+    def table_exists(self, name):
+        qry = DB_QUERIES["PR_TABLE_EXISTS"].format(name)
+        exist = self.execute_query(qry)
         return exist[0]
     
     def execute_query(self, query):
@@ -84,10 +98,10 @@ class DataAccess():
         try : 
             ret = cur.fetchall()
         except Exception as err:
-            app._log({"Error":err})
+            _log({"Error":err})
         cur.close()
         conn.commit()
         conn.close()
         if ret : 
-            app._log({"query returned":ret})
+            _log({"query returned":ret})
             return ret
