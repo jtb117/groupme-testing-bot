@@ -9,10 +9,13 @@ import boto3
 import os
 import pandas as pd
 import io
+import sys
 from memory_profiler import profile
 
-from app import ALL_DATES, _log
+
 from constants import DB_QUERIES, S3_BUCKET
+
+ALL_DATES = (pd.to_datetime('2010-01-01'), pd.to_datetime('today'))
 
 class DataAccess():
     def __init__(self, db_url):
@@ -21,6 +24,9 @@ class DataAccess():
         self._aws_secret_key = os.getenv('AWS_SECRET_ACCESS_KEY')
         self.s3 = self._get_s3()
     
+    def _log(msg):
+        print(str(msg))
+        sys.stdout.flush()
     # S3 Functions
     def _get_s3(self):
         s3 = boto3.resource(
@@ -33,7 +39,7 @@ class DataAccess():
     
     @profile
     def get_chat_full(self, file_type='pickle', time_convert=False):
-        _log('fetching chat')
+        self._log('fetching chat')
         obj = self.s3.Object(S3_BUCKET,f'full_text.{file_type}')
         if file_type == 'pickle':
             df = pd.read_pickle(io.BytesIO(obj.get()['Body'].read()), 
@@ -45,7 +51,7 @@ class DataAccess():
                 df['created_at'] = pd.to_datetime(df['created_at'], unit='ms')
                 df.sort_values(by='created_at', inplace=True)
         df.index.name = 'id'
-        _log('returning chat')
+        self._log('returning chat')
         return df
     
     def get_chat_chunk(self, num_chunks=5):
@@ -98,10 +104,10 @@ class DataAccess():
         try : 
             ret = cur.fetchall()
         except Exception as err:
-            _log({"Error":err})
+            self._log({"Error":err})
         cur.close()
         conn.commit()
         conn.close()
         if ret : 
-            _log({"query returned":ret})
+            self._log({"query returned":ret})
             return ret
