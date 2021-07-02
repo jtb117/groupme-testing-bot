@@ -67,6 +67,8 @@ def send_image(img_urls, send=True, typ='image'):
         for img in img_urls:
             post_body['attachments'].append({
                 'type':typ,
+                'preview_url':
+                    "https://i.groupme.com/737x888.jpeg.f73d0aeebb70494da3517d7b007db155",
                 'url':img
             })
     else :
