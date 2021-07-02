@@ -148,7 +148,7 @@ def remember(data):
         trig  = command[0]
         response = command[1]
         old_trig = trig
-        if not data_access.pr_table_exists():
+        if not data_access.table_exists():
             data_access.execute_query(DB_QUERIES["CREATE_PR_TABLE"])
         if "'" in trig:
             start = trig.find("'")
