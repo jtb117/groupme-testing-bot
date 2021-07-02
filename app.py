@@ -58,6 +58,7 @@ def send_message(data):
   url  = BASE_URL+'/bots/post'
   _log(f'message sent: {data}')
   request = requests.post(url, json=data)
+  _log(request)
   return request
 
 def send_image(img_urls, send=True, typ='image'):
@@ -74,6 +75,8 @@ def send_image(img_urls, send=True, typ='image'):
     else :
         post_body['attachments'].append({
                 'type':typ,
+                'preview_url':
+                    "https://i.groupme.com/737x888.jpeg.f73d0aeebb70494da3517d7b007db155",
                 'url':img_urls
             })
     if send: send_message(post_body)
