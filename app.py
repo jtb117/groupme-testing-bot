@@ -161,8 +161,8 @@ def remember(data):
         if "'" in trig:
             start = trig.find("'")
             trig  = trig[:start] + "'" + trig[start:]
-        if response[-2:] == '-i' or response[-2:] == '-v':
-            response = response[:-3]
+        print(trig)
+        print(reponse)
         qry = DB_QUERIES["PR_INSERT"].format(trig, response)
         data_access.execute_query(qry)
         msg = f'"{old_trig}" will now trigger "{response}"'
