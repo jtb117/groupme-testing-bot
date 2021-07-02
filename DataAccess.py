@@ -92,7 +92,7 @@ class DataAccess():
             
     ## General
     def table_exists(self, name):
-        qry = DB_QUERIES["PR_TABLE_EXISTS"].format(name)
+        qry = DB_QUERIES["TABLE_EXISTS"].format(name)
         exist = self.execute_query(qry)
         return exist[0]
     
