@@ -95,6 +95,7 @@ def make_request(resource, payload):
     return response
   
 def find_call(data):
+    _log("finding command")
     text = data["text"][5:]
     command = text.split(' ')[0]
     if command[0] == '!':
@@ -211,6 +212,7 @@ def forget(data):
     basic_message(msg)
 
 def check_triggers(text):
+    _log("checking triggers")
     trig_list = data_access.get_triggers()
     msg = ''
     for trig in trig_list:
