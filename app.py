@@ -138,36 +138,37 @@ def mention_all(data):
     curr_attachments, curr_loci = [], []
     curr_attach_dict = default_attach_dict
     curr_data = default_data
-    for mem in members:
-        nickname = members[mem]["nickname"]
-        if walker+nickname+2 > MAX_MSG_LENGTH:
-            # Flush message
-            curr_attach_dict["loci"] = curr_loci
-            curr_attachments.append(curr_attach_dict)
-            curr_data["text"] = curr_text
-            curr_data["attachments"] = curr_attachments
-            out_data.append(curr_data)
-            # Reset values
-            walker = 1
-            curr_text = ""
-            curr_attachments, curr_loci = [], []
-            curr_attach_dict = default_attach_dict
-            curr_data = default_data
-        else:
-            curr_text += f'@{nickname} '
-            l = [walker, len(nickname)+1]
-            walker += len(nickname) + 2
-            curr_attach_dict["user_ids"].append(mem)
-            curr_loci.append(l)
+    if members:
+        for mem in members:
+            nickname = members[mem]["nickname"]
+            if walker+nickname+2 > MAX_MSG_LENGTH:
+                # Flush message
+                curr_attach_dict["loci"] = curr_loci
+                curr_attachments.append(curr_attach_dict)
+                curr_data["text"] = curr_text
+                curr_data["attachments"] = curr_attachments
+                out_data.append(curr_data)
+                # Reset values
+                walker = 1
+                curr_text = ""
+                curr_attachments, curr_loci = [], []
+                curr_attach_dict = default_attach_dict
+                curr_data = default_data
+            else:
+                curr_text += f'@{nickname} '
+                l = [walker, len(nickname)+1]
+                walker += len(nickname) + 2
+                curr_attach_dict["user_ids"].append(mem)
+                curr_loci.append(l)
     # Flush message
-    curr_attach_dict["loci"] = curr_loci
-    curr_attachments.append(curr_attach_dict)
-    curr_data["text"] = curr_text
-    curr_data["attachments"] = curr_attachments
-    out_data.append(curr_data)
-    for data in out_data:
-        send_message(data)
-    
+        curr_attach_dict["loci"] = curr_loci
+        curr_attachments.append(curr_attach_dict)
+        curr_data["text"] = curr_text
+        curr_data["attachments"] = curr_attachments
+        out_data.append(curr_data)
+        for data in out_data:
+            send_message(data)
+        
 def remember(data):
     text = data['text']
     command = text[15:].split('::')
