@@ -106,11 +106,15 @@ def find_call(data):
         command_not_found()
         
 def basic_message(msg):
-    data = {
-        "bot_id" : BOT_ID,
-        "text": msg
-    }
-    send_message(data)
+    split_msg = []
+    for i in range(0,len(msg),MAX_MSG_LENGTH):
+        split_msg.append(msg[i:i+MAX_MSG_LENGTH])
+    for m in split_msg:  
+        data = {
+            "bot_id" : BOT_ID,
+            "text": msg
+        }
+        send_message(data)
     
 def commands(data):
     msg = ''
