@@ -43,7 +43,7 @@ def webhook():
       _log('===============FINDING CALL===============')
   else:
       if data['sender_id'] != GM_BOT_ID:
-          msg = check_triggers(data['text'])
+          msg = check_triggers(data.get('text'))
           if len(msg) > 0:
               flag = msg[-2:]
               if flag == '-i':
@@ -98,7 +98,7 @@ def find_call(data):
     text = data["text"][5:]
     command = text.split(' ')[0]
     if command[0] == '!':
-        func = CALLS[command]
+        func = CALLS.get(command)
         if func : func(data)
         else    : command_not_found()
     else:
@@ -127,6 +127,7 @@ def fuck_jacob(data):
         basic_message('fuck jacob')
         
 def mention_all(data):
+    _log("Mentioning all members")
     members = _get_members()
     out_data = [] # List of message json's to send
     # Initialize
