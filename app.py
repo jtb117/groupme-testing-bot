@@ -17,7 +17,7 @@ from matplotlib import pyplot as plt
 from flask import Flask, request
 
 from DataAccess import DataAccess
-from constants import DB_QUERIES, BASE_URL, IMAGE_URL, HEADERS, ID_TO_NAME, IMAGE_SEND_BODY
+from constants import DB_QUERIES, BASE_URL, IMAGE_URL, HEADERS, ID_TO_NAME, IMAGE_SEND_BODY, MAX_MSG_LENGTH
 
 AWS_KEY_ID = os.getenv('AWS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -128,28 +128,46 @@ def fuck_jacob(data):
         
 def mention_all(data):
     members = _get_members()
-    if members:
-        # Initialize
-        data = {"bot_id" : BOT_ID}
-        text = ""
-        attachments, loci = [], []
-        walker = 1
-        attach_dict = {"type":"mentions", "user_ids":[]}
-        # Work 
-        for mem in members:
-            text += " @"
-            nickname = members[mem]["nickname"]
+    out_data = [] # List of message json's to send
+    # Initialize
+    default_data = {"bot_id" : BOT_ID}
+    default_attach_dict = {"type":"mentions", "user_ids":[]}
+    # Currs
+    walker = 1
+    curr_text = ""
+    curr_attachments, curr_loci = [], []
+    curr_attach_dict = default_attach_dict
+    curr_data = default_data
+    for mem in members:
+        nickname = members[mem]["nickname"]
+        if walker+nickname+2 > MAX_MSG_LENGTH:
+            # Flush message
+            curr_attach_dict["loci"] = curr_loci
+            curr_attachments.append(curr_attach_dict)
+            curr_data["text"] = curr_text
+            curr_data["attachments"] = curr_attachments
+            out_data.append(curr_data)
+            # Reset values
+            walker = 1
+            curr_text = ""
+            curr_attachments, curr_loci = [], []
+            curr_attach_dict = default_attach_dict
+            curr_data = default_data
+        else:
+            curr_text += f'@{nickname} '
             l = [walker, len(nickname)+1]
-            text += nickname
             walker += len(nickname) + 2
-            attach_dict["user_ids"].append(mem)
-            loci.append(l)
-        attach_dict["loci"] = loci
-        attachments.append(attach_dict)
-        data["text"] = text
-        data["attachments"] = attachments
+            curr_attach_dict["user_ids"].append(mem)
+            curr_loci.append(l)
+    # Flush message
+    curr_attach_dict["loci"] = curr_loci
+    curr_attachments.append(curr_attach_dict)
+    curr_data["text"] = curr_text
+    curr_data["attachments"] = curr_attachments
+    out_data.append(curr_data)
+    for data in out_data:
         send_message(data)
-        
+    
 def remember(data):
     text = data['text']
     command = text[15:].split('::')
