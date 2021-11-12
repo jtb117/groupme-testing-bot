@@ -112,7 +112,7 @@ def basic_message(msg):
     for m in split_msg:  
         data = {
             "bot_id" : BOT_ID,
-            "text": msg
+            "text": m
         }
         send_message(data)
     
