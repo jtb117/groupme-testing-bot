@@ -140,6 +140,7 @@ def mention_all(data):
     curr_attach_dict = default_attach_dict
     curr_data = default_data
     if members:
+        _log('here')
         for mem in members:
             nickname = members[mem]["nickname"]
             if walker+nickname+2 > MAX_MSG_LENGTH:
