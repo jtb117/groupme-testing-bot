@@ -4,7 +4,7 @@ Created on Sat Dec 26 15:33:01 2020
 
 @author: James
 """
-MAX_MSG_LENGTH = 998+
+MAX_MSG_LENGTH = 998
 # Group members
 ID_TO_NAME = {
         '10319321':'Ethan',
