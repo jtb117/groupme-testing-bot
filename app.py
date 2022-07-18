@@ -366,7 +366,8 @@ def aiprompt(prompt):
     text = _openai(prompt)
     return basic_message(text)
     
-def _openai(text):
+def _openai(data):
+    text = data['text']
     response = openai.Completion.create(
             model="text-davinci-002",
             prompt=text,
