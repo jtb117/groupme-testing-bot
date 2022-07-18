@@ -11,6 +11,7 @@ import os
 import sys
 import requests
 import io
+import openai
 import pandas as pd
 from matplotlib import pyplot as plt
 
@@ -358,6 +359,22 @@ def _log(msg):
   print(str(msg))
   sys.stdout.flush()
   
+  
+# AI stuff
+
+def aiprompt(prompt):
+    text = _openai(prompt)
+    return basic_message(text)
+    
+def _openai(text):
+    response = openai.Completion.create(
+            model="text-davinci-002",
+            prompt=text,
+            temperature=0.7,
+        )
+    output = response['choices'][0]['text'] #Lol
+    return output
+  
 
 # ====== Image Functions =====
 
@@ -406,4 +423,5 @@ CALLS = {
             "!random-pic":get_random_pic,
             "!fuck-jacob":fuck_jacob,
             "!commands":commands,
+            "!ai-prompt":aiprompt,
         }
