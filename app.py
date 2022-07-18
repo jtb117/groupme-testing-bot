@@ -362,16 +362,18 @@ def _log(msg):
   
 # AI stuff
 
-def aiprompt(prompt):
-    text = _openai(prompt)
-    return basic_message(text)
-    
-def _openai(data):
+def aiprompt(data):
     text = data['text']
+    text = text[10:]
+    ret = _openai(text)
+    return basic_message(ret)
+    
+def _openai(text):
     response = openai.Completion.create(
             model="text-davinci-002",
             prompt=text,
             temperature=0.7,
+            max_tokens="50"
         )
     output = response['choices'][0]['text'] #Lol
     return output
