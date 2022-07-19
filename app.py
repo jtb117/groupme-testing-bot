@@ -395,7 +395,8 @@ def bot_answer(data):
     for i in recent:
         ai_input += f'\n{i["name"]}: {i["text"]}'
     _log(f'AI INPUT: {ai_input}')
-    _openai(ai_input)        
+    ai_response = _openai(ai_input)
+    basic_message(ai_response)
     
     
 def _read_up(data):
