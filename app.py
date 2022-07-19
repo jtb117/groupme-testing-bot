@@ -42,6 +42,8 @@ def webhook():
   if "@bot" in data['text']:
       find_call(data)
       _log('===============FINDING CALL===============')
+  elif "fellasbot" in data['text'].lower():
+      bot_answer(data)
   else:
       if data['sender_id'] != GM_BOT_ID:
           msg = check_triggers(data.get('text'))
@@ -369,7 +371,7 @@ def _log(msg):
 
 def aiprompt(data):
     text = data['text']
-    text = text[10:]
+    text = text[10:].strip()
     ret = _openai(text)
     basic_message(ret)
     
@@ -382,6 +384,23 @@ def _openai(text):
         )
     output = response['choices'][0]['text'] #Lol
     return output.strip()
+
+def bot_answer(data):
+    BASE_PROMPT = "Continue this conversation."
+    recent = _read_up(data)
+    ai_input = BASE_PROMPT
+    for i in recent:
+        ai_input += f'\n{i["name"]}: {i["text"]}'
+    _openai(ai_input)        
+    
+    
+def _read_up(data):
+    url  = BASE_URL+'/groups/'+MAIN_GROUP+'/messages'
+    curr_msg_id = data['id']
+    response = requests.post(url, json={'before_id':curr_msg_id, 'limit':5})
+    msgs = response['messages']
+    return msgs
+
   
 
 # ====== Image Functions =====
