@@ -383,6 +383,8 @@ def _openai(text):
             max_tokens= 2000,
         )
     output = response['choices'][0]['text'] #Lol
+    if output.strip() = '':
+        output = "Something went wrong. Can't help you."
     _log(f'ai output: {output}')
     return output.strip()
 
