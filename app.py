@@ -380,7 +380,7 @@ def _openai(text):
     _log(f'ai input: {text}')
     response = openai.Completion.create(
             model="text-davinci-002",
-            prompt=text,
+            prompt=text+'\n',
             temperature=0.7,
             max_tokens= 2000,
         )
@@ -393,7 +393,7 @@ def _openai(text):
 
 def bot_answer(data):
     _log('bot is answering')
-    BASE_PROMPT = "Continue this conversation for FellasBot's reply only."
+    BASE_PROMPT = "Continue this conversation as FellasBot's."
     recent = _read_up(data)
     filtered = []
     for i in recent:
