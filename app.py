@@ -390,6 +390,7 @@ def bot_answer(data):
     _log('bot is answering')
     BASE_PROMPT = "Continue this conversation."
     recent = _read_up(data)
+    recent = recent[-5:]
     ai_input = BASE_PROMPT
     for i in recent:
         ai_input += f'\n{i["name"]}: {i["text"]}'
@@ -400,7 +401,7 @@ def bot_answer(data):
 def _read_up(data):
     url  = BASE_URL+'/groups/'+str(MAIN_GROUP)+f'/messages?token={TOKEN}'
     curr_msg_id = data['id']
-    js = {'before_id':curr_msg_id, 'limit':5, 'bot_id': BOT_ID}
+    js = {'before_id':curr_msg_id,'bot_id': BOT_ID}
     response = requests.get(url, json=js)
     _log(f'\ncurr_id:{curr_msg_id}\nurl:{url}\nresponse:{response.json()}\n')
     msgs = response.json()['response']['messages']
