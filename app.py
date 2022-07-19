@@ -376,6 +376,7 @@ def aiprompt(data):
     basic_message(ret)
     
 def _openai(text):
+    _log(f'ai input: {text}')
     response = openai.Completion.create(
             model="text-davinci-002",
             prompt=text,
@@ -383,8 +384,8 @@ def _openai(text):
             max_tokens= 2000,
         )
     output = response['choices'][0]['text'] #Lol
-    output = output.replace("Fellasbot: ", "")
     _log(f'ai output: {output}')
+    output = output.replace("Fellasbot: ", "")
     return output.strip()
 
 def bot_answer(data):
