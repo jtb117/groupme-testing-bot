@@ -114,7 +114,7 @@ def basic_message(msg):
     else:
         cnt = int(cnt)
     for i in range(0,cnt):
-        split_msg.append(msg[i:i*MAX_MSG_LENGTH])
+        split_msg.append(msg[i:(i+1)*MAX_MSG_LENGTH])
     for m in split_msg:  
         data = {
             "bot_id" : BOT_ID,
