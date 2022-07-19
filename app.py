@@ -373,7 +373,7 @@ def _openai(text):
             model="text-davinci-002",
             prompt=text,
             temperature=0.7,
-            max_tokens="50"
+            max_tokens= 50,
         )
     output = response['choices'][0]['text'] #Lol
     return output
