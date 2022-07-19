@@ -108,8 +108,13 @@ def find_call(data):
         
 def basic_message(msg):
     split_msg = []
-    for i in range(0,len(msg),MAX_MSG_LENGTH):
-        split_msg.append(msg[i:i+MAX_MSG_LENGTH])
+    cnt = len(msg)/MAX_MSG_LENGTH
+    if int(cnt) < cnt:
+        cnt = int(cnt) + 1
+    else:
+        cnt = int(cnt)
+    for i in range(0,cnt):
+        split_msg.append(msg[i:i*MAX_MSG_LENGTH])
     for m in split_msg:  
         data = {
             "bot_id" : BOT_ID,
@@ -366,17 +371,17 @@ def aiprompt(data):
     text = data['text']
     text = text[10:]
     ret = _openai(text)
-    return basic_message(ret)
+    basic_message(ret)
     
 def _openai(text):
     response = openai.Completion.create(
             model="text-davinci-002",
             prompt=text,
             temperature=0.7,
-            max_tokens= 50,
+            max_tokens= 2000,
         )
     output = response['choices'][0]['text'] #Lol
-    return output
+    return output.strip()
   
 
 # ====== Image Functions =====
