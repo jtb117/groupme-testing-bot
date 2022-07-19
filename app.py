@@ -397,7 +397,9 @@ def bot_answer(data):
     recent = _read_up(data)
     filtered = []
     for i in recent:
-        if '@bot' not in i['text']:
+        t = i['text']
+        if '@bot' not in t:
+            t = t.replace('\n', ' ')
             filtered.append(i)
     ai_input = BASE_PROMPT
     cnt = 0
