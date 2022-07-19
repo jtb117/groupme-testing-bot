@@ -383,6 +383,7 @@ def _openai(text):
             max_tokens= 2000,
         )
     output = response['choices'][0]['text'] #Lol
+    _log(f'ai output: {output}')
     return output.strip()
 
 def bot_answer(data):
@@ -392,6 +393,7 @@ def bot_answer(data):
     ai_input = BASE_PROMPT
     for i in recent:
         ai_input += f'\n{i["name"]}: {i["text"]}'
+    _log(f'AI INPUT: {ai_input}')
     _openai(ai_input)        
     
     
