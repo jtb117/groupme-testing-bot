@@ -401,12 +401,11 @@ def bot_answer(data):
         if '@bot' not in t:
             t = t.replace('\n', ' ')
             filtered.append(i)
+    filtered = list(reversed(filtered))
     ai_input = BASE_PROMPT
     cnt = 0
-    for i in reversed(filtered):
-        if cnt < 5:
-            ai_input += f'\n{i["name"]}: {i["text"]}'
-        cnt += 1
+    for i in filtered[-5:]:
+        ai_input += f'\n{i["name"]}: {i["text"]}'
     _log(f'AI INPUT: {ai_input}')
     ai_response = _openai(ai_input)
     basic_message(ai_response)
