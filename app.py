@@ -399,6 +399,7 @@ def _read_up(data):
     url  = BASE_URL+'/groups/'+str(MAIN_GROUP)+'/messages'
     curr_msg_id = data['id']
     response = requests.post(url, json={'before_id':curr_msg_id, 'limit':5})
+    _log(f'curr_id:{curr_msg_id}\nresponse:{response}')
     msgs = response.json()['response']['messages']
     return msgs
 
