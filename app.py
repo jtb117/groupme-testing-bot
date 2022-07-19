@@ -390,10 +390,12 @@ def bot_answer(data):
     _log('bot is answering')
     BASE_PROMPT = "Continue this conversation."
     recent = _read_up(data)
-    recent = recent[-5:]
     ai_input = BASE_PROMPT
+    cnt = 0
     for i in recent:
-        ai_input += f'\n{i["name"]}: {i["text"]}'
+        if '@bot' not in i['text'] and cnt < 5:
+            ai_input += f'\n{i["name"]}: {i["text"]}'
+        cnt += 1
     _log(f'AI INPUT: {ai_input}')
     ai_response = _openai(ai_input)
     basic_message(ai_response)
