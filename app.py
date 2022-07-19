@@ -43,6 +43,7 @@ def webhook():
       find_call(data)
       _log('===============FINDING CALL===============')
   elif "fellasbot" in data['text'].lower():
+      _log(f'===bot answering===\ntrigger:{data["text"]}')
       bot_answer(data)
   else:
       if data['sender_id'] != GM_BOT_ID:
@@ -386,6 +387,8 @@ def _openai(text):
     output = response['choices'][0]['text'] #Lol
     _log(f'ai output: {output}')
     output = output.replace("Fellasbot: ", "")
+    output = output.replace("fellasbot: ", "")
+    output = output.replace("FellasBot: ", "") #oh well
     return output.strip()
 
 def bot_answer(data):
