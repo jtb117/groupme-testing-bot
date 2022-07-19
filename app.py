@@ -399,6 +399,7 @@ def bot_answer(data):
     for i in recent:
         t = i['text']
         if not t: break
+        if i['sender_id'] == GM_BOT_ID: break
         if '@bot' not in t:
             t = t.replace('\n', ' ')
             filtered.append(i)
