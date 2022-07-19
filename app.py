@@ -393,14 +393,13 @@ def _openai(text):
 
 def bot_answer(data):
     _log('bot is answering')
-    BASE_PROMPT = "Continue this conversation as FellasBot. Do not include text from anyone else"
+    BASE_PROMPT = "Continue this conversation as FellasBot. Do not include text from anyone else.\n"
     recent = _read_up(data)
     filtered = []
     for i in recent:
         t = i['text']
         if not t: break
-        if i['sender_id'] == GM_BOT_ID: break
-        if '@bot' not in t:
+        if i['sender_id'] != GM_BOT_ID and '@bot' not in t:
             t = t.replace('\n', ' ')
             filtered.append(i)
     filtered = list(reversed(filtered))
