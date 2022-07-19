@@ -386,6 +386,7 @@ def _openai(text):
     return output.strip()
 
 def bot_answer(data):
+    _log('bot is answering')
     BASE_PROMPT = "Continue this conversation."
     recent = _read_up(data)
     ai_input = BASE_PROMPT
@@ -395,10 +396,10 @@ def bot_answer(data):
     
     
 def _read_up(data):
-    url  = BASE_URL+'/groups/'+MAIN_GROUP+'/messages'
+    url  = BASE_URL+'/groups/'+str(MAIN_GROUP)+'/messages'
     curr_msg_id = data['id']
     response = requests.post(url, json={'before_id':curr_msg_id, 'limit':5})
-    msgs = response['messages']
+    msgs = response.get_json()['messages']
     return msgs
 
   
