@@ -393,7 +393,7 @@ def _openai(text):
 
 def bot_answer(data):
     _log('bot is answering')
-    BASE_PROMPT = "Continue this conversation for Fellasbot reply."
+    BASE_PROMPT = "Continue this conversation for FellasBot's reply only."
     recent = _read_up(data)
     filtered = []
     for i in recent:
