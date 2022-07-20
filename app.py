@@ -56,7 +56,7 @@ def webhook():
   if "@bot" in data['text']:
       find_call(data)
       _log('===============FINDING CALL===============')
-  elif "fellasbot" in data['text'].lower():
+  elif "fellasbot" in data['text'].lower() and data['sender_id'] != GM_BOT_ID:
       _log(f'===bot answering===\ntrigger:{data["text"]}')
       bot_answer(data)
   else:
@@ -394,7 +394,7 @@ def _openai(text):
     response = openai.Completion.create(
             model="text-davinci-002",
             prompt=text+'\n',
-            temperature=0.7,
+            temperature=0.9,
             max_tokens= 2000,
         )
     output = response['choices'][0]['text'] #Lol
@@ -404,7 +404,7 @@ def _openai(text):
     output = output.replace("FellasBot: ", "") #oh well
     return output.strip()
 
-def bot_answer(data):
+def bot_answer(data, depth=5):
     _log('bot is answering')
     BASE_PROMPT = "Continue this conversation as FellasBot. Send only 1 reply. \
         Do not speak as anyone bot FellasBot. Do not send more than 1 message.\n"
@@ -414,19 +414,18 @@ def bot_answer(data):
     for i in recent:
         t = i['text']
         if not t: pass
-        if '@bot' in t:
-            pass_next = True
-        elif pass_next:
-            pass_next = False # doesnt catch multi message replies
+        elif '@bot' in t: pass_next = True
+        elif pass_next: pass_next = False # doesnt catch multi message replies
         else:
             t = t.strip()
             if t[-1] not in PUNCS: t += '.'
             t = t.replace('\n', ' ')
             filtered.append(i)
     filtered = list(reversed(filtered))
+    # make input
     ai_input = BASE_PROMPT
     BASE_PROMPT += f"Respond to {filtered[-1]['name']}.\n"
-    for i in filtered[-5:]:
+    for i in filtered[-depth:]:
         ai_input += f'\n{i["name"]}: {i["text"]}'
     ai_response = _openai(ai_input)
     basic_message(ai_response)
