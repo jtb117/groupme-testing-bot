@@ -15,7 +15,7 @@ import pandas as pd
 import uberduckapi as ud
 from moviepy.editor import AudioFileClip, ImageClip
 from matplotlib import pyplot as plt
-
+from os.path import exists
 from flask import Flask, request
 
 from DataAccess import DataAccess
@@ -35,9 +35,9 @@ GM_BOT_ID = '850624'
 GROUP_ID  = '29766648'
 ALL_DATES = (pd.to_datetime('2010-01-01'), pd.to_datetime('today'))
 
-IMG_PATH = 'default.jpg'
-AUD_PATH = 'rec.wav'
-OUT_PATH = 'rec.mp4'
+IMG_PATH = './default.jpg'
+AUD_PATH = './rec.wav'
+OUT_PATH = './rec.mp4'
 
 PUNCS = ['.','?','!']
 
@@ -454,6 +454,7 @@ def _get_rec(data, voice='hal-9000'):
     while not rec_holder:
         pass
     rec_holder.save(AUD_PATH)
+    print(exists(AUD_PATH))
     
 def _add_static_image_to_audio(image_path, audio_path, output_path):
     audio_clip = AudioFileClip(audio_path)
