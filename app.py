@@ -62,7 +62,6 @@ def send_message(data):
   url  = BASE_URL+'/bots/post'
   _log(f'message sent: {data}')
   request = requests.post(url, json=data)
-  _log(request)
   return request
 
 def send_image(img_urls, send=True, typ='image'):
@@ -417,7 +416,7 @@ def _read_up(data):
     curr_msg_id = data['id']
     js = {'before_id':curr_msg_id,'bot_id': BOT_ID}
     response = requests.get(url, json=js)
-    _log(f'\ncurr_id:{curr_msg_id}\nurl:{url}\nresponse:{response.json()}\n')
+    _log(f'\ncurr_id:{curr_msg_id}\nurl:{url}\nresponse:{response}\n')
     msgs = response.json()['response']['messages']
     return msgs
 
