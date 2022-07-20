@@ -441,18 +441,19 @@ def _read_up(data):
     msgs = response.json()['response']['messages']
     return msgs
 
-  
+# speech
 def aispeak(data):
     _get_rec(data)
     _add_static_image_to_audio(IMG_PATH, AUD_PATH, OUT_PATH)
-    _send_file()
+    url = upload_to_service(OUT_PATH, 'video')
+    send_image([url], typ='video')
 
 def _get_rec(data, voice='hal-9000'):
     text = data['text']
     rec_holder = md.get_voice(voice, text)
     while not rec_holder:
         pass
-    rec_holder.save('temp.wav')
+    rec_holder.save(AUD_PATH)
     
 def _add_static_image_to_audio(image_path, audio_path, output_path):
     audio_clip = AudioFileClip(audio_path)
@@ -470,6 +471,7 @@ def aiimage(data):
         data={'text': instruct},
         headers={'api-key': 'quickstart-QUdJIGlzIGNvbWluZy4uLi4K'}
     )
+    _log(r.json())
     if r.json()['output_url']: basic_message(r.json()['output_url'])
     else : basic_message(r.status_code)
     
@@ -479,16 +481,26 @@ def aiimage(data):
 # Returns dataframe with
 #  index: sender_id
 #  cols:  message_count, name
-def upload_to_service(fname, image=True):
-    d = open(f'./{fname}', 'rb').read()
-    h = {
-        'X-Access-Token': f"{TOKEN}",
-        'Content-Type': 'image/jpeg' if image else 'video/mp4'
-    }
-    response = requests.post('https://image.groupme.com/pictures', 
-                             headers=h, data=d)
+def upload_to_service(fname, typ='image'):
+    f = {'file': open(f'./{fname}', 'rb').read()}
+    if typ == 'video':
+        h = {
+            'X-Access-Token': TOKEN,
+            'X-Conversation-Id': GROUP_ID
+        }
+        url = 'https://video.groupme.com/transcode'
+    elif typ == 'image':
+        h = {
+            'X-Access-Token': f"{TOKEN}",
+            'Content-Type': 'image/jpeg'
+        }
+        url = 'https://image.groupme.com'
+    response = requests.post(url, headers=h, files=f)
     if response:
-        return response.json()['payload']['picture_url']
+        if typ == 'video':
+            return response.json()['status_url']
+        elif typ == 'image':
+            return response.json()['payload']['picture_url']
     else:
         return response.json()
 
