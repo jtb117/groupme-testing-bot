@@ -11,4 +11,4 @@ openai==0.20.0
 uberduckapi==0.1.18
 moviepy==1.0.3
 imageio[pyav]==2.9.0
-opencv-python==1.20.1
+opencv-python==4.6.0.66
