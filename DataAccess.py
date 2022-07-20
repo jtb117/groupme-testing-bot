@@ -117,7 +117,7 @@ class DataAccess():
             self._log({"query returned":ret})
             return ret
 
-    def download_default():
+    def download_default(self):
         r = requests.get(DEFAULT_PIC_URL)
         if r.status_code == 200:
             with open(IMG_PATH,'wb') as f:
