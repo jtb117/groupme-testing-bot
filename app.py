@@ -404,7 +404,7 @@ def bot_answer(data):
             filtered.append(i)
     filtered = list(reversed(filtered))
     ai_input = BASE_PROMPT
-    cnt = 0
+    BASE_PROMPT += f"Respond to {filtered[-1]['name']}.\n"
     for i in filtered[-5:]:
         ai_input += f'\n{i["name"]}: {i["text"]}'
     _log(f'AI INPUT: {ai_input}')
