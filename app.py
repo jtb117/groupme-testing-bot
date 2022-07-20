@@ -72,11 +72,11 @@ def webhook():
                   basic_message(msg)
   return "ok", 200
 
-def send_message(data):
+def send_message(d):
   url  = BASE_URL+'/bots/post'
-  _log(f'message sent: {data}')
-  request = requests.post(url, json=data)
-  return request
+  _log(f'message sent: {d}')
+  r = requests.post(url, data=d)
+  return r
 
 def send_image(img_urls, send=True, typ='image'):
     post_body = IMAGE_SEND_BODY
@@ -460,8 +460,7 @@ def _add_static_image_to_audio(image_path, audio_path, output_path):
     print(os.listdir())
     audio_clip = AudioFileClip(audio_path)
     image_clip = ImageClip(image_path)
-    video_clip = VideoClip(image_clip)
-    video_clip.set_audio(audio_clip)
+    video_clip = image_clip.set_audio(audio_clip)
     video_clip.duration = audio_clip.duration
     video_clip.fps = 1
     video_clip.write_videofile(output_path)
@@ -505,7 +504,8 @@ def upload_to_service(fname, typ='image'):
         elif typ == 'image':
             return response.json()['payload']['picture_url']
     else:
-        return response.json()
+        print(response)
+        return response
 
 
 def _get_message_counts():
