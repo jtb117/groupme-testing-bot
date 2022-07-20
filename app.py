@@ -406,8 +406,7 @@ def _openai(text):
 
 def bot_answer(data, depth=5):
     _log('bot is answering')
-    BASE_PROMPT = "Continue this conversation as FellasBot. Send only 1 reply. \
-        Do not speak as anyone bot FellasBot. Do not send more than 1 message.\n"
+    BASE_PROMPT = "Continue this conversation as FellasBot. Send only 1 reply. Do NOT include dialogue from anyone other than FellasBot.\n"
     recent = _read_up(data)
     filtered = []
     pass_next = False
@@ -420,6 +419,7 @@ def bot_answer(data, depth=5):
             t = t.strip()
             if t[-1] not in PUNCS: t += '.'
             t = t.replace('\n', ' ')
+            i['text'] = t
             filtered.append(i)
     filtered = list(reversed(filtered))
     # make input
@@ -427,6 +427,7 @@ def bot_answer(data, depth=5):
     BASE_PROMPT += f"Respond to {filtered[-1]['name']}.\n"
     for i in filtered[-depth:]:
         ai_input += f'\n{i["name"]}: {i["text"]}'
+    ai_input
     ai_response = _openai(ai_input)
     basic_message(ai_response)
     
