@@ -457,6 +457,7 @@ def _get_rec(data, voice='hal-9000'):
     print(exists(AUD_PATH))
     
 def _add_static_image_to_audio(image_path, audio_path, output_path):
+    print(os.listdir())
     audio_clip = AudioFileClip(audio_path)
     image_clip = ImageClip(image_path)
     video_clip = image_clip.set_audio(audio_clip)
