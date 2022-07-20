@@ -470,8 +470,8 @@ def aiimage(data):
         data={'text': instruct},
         headers={'api-key': 'quickstart-QUdJIGlzIGNvbWluZy4uLi4K'}
     )
-    url = r.json()['output_url']
-    basic_message(url)
+    if r.json()['output_url']: basic_message(r.json()['output_url'])
+    else : basic_message(r.status_code)
     
 
 # ====== Image Functions =====
