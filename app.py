@@ -13,7 +13,7 @@ import requests
 import openai
 import pandas as pd
 import uberduckapi as ud
-from moviepy.editor import AudioFileClip, ImageClip
+from moviepy.editor import AudioFileClip, ImageClip, VideoClip
 from matplotlib import pyplot as plt
 from os.path import exists
 from flask import Flask, request
@@ -460,7 +460,8 @@ def _add_static_image_to_audio(image_path, audio_path, output_path):
     print(os.listdir())
     audio_clip = AudioFileClip(audio_path)
     image_clip = ImageClip(image_path)
-    video_clip = image_clip.set_audio(audio_clip)
+    video_clip = VideoClip(image_clip)
+    video_clip.set_audio(audio_clip)
     video_clip.duration = audio_clip.duration
     video_clip.fps = 1
     video_clip.write_videofile(output_path)
