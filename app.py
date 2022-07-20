@@ -13,6 +13,8 @@ import requests
 import io
 import openai
 import pandas as pd
+import uberduckapi as ud
+from moviepy.editor import AudioFileClip, ImageClip
 from matplotlib import pyplot as plt
 
 from flask import Flask, request
@@ -24,6 +26,9 @@ AWS_KEY_ID = os.getenv('AWS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 BOT_ID = os.getenv('GROUPME_BOT_ID')
 TOKEN = os.getenv('TOKEN')
+UD_PUB = os.getenv('UD_PUB')
+UD_SEC = os.getenv('UD_SEC')
+
 MAIN_GROUP = os.getenv('MAIN_GROUP')
 ADMIN_ID = os.getenv('ADMIN_ID')
 DATABASE_URL = os.getenv('DATABASE_URL')
@@ -31,7 +36,15 @@ GM_BOT_ID = '850624'
 GROUP_ID  = '29766648'
 ALL_DATES = (pd.to_datetime('2010-01-01'), pd.to_datetime('today'))
 
+IMG_PATH = 'default.jpg'
+AUD_PATH = 'rec.wav'
+OUT_PATH = 'rec.mp4'
+
 data_access = DataAccess(DATABASE_URL)
+data_access.download_default()
+
+
+md = ud.UberDuck(UD_PUB, UD_SEC)
 
 app = Flask(__name__)
 
@@ -397,8 +410,11 @@ def bot_answer(data):
     filtered = []
     for i in recent:
         t = i['text']
-        if not t: break
-        if i['sender_id'] != GM_BOT_ID and '@bot' not in t:
+        if not t: pass
+        elif i['sender_id'] != GM_BOT_ID and '@bot' not in t:
+            if 'fellasbot' in i['text'].lower():
+                filtered.append(i)
+                break
             t = t.replace('\n', ' ')
             filtered.append(i)
     filtered = list(reversed(filtered))
@@ -406,7 +422,6 @@ def bot_answer(data):
     BASE_PROMPT += f"Respond to {filtered[-1]['name']}.\n"
     for i in filtered[-5:]:
         ai_input += f'\n{i["name"]}: {i["text"]}'
-    _log(f'AI INPUT: {ai_input}')
     ai_response = _openai(ai_input)
     basic_message(ai_response)
     
@@ -421,12 +436,46 @@ def _read_up(data):
     return msgs
 
   
+def aispeak(data):
+    _get_rec(data)
+    _add_static_image_to_audio(IMG_PATH, AUD_PATH, OUT_PATH)
+    _send_file
+
+def _get_rec(data, voice='hal-9000'):
+    text = data['text']
+    rec_holder = md.get_voice(voice, text)
+    while not rec_holder:
+        pass
+    rec_holder.save('temp.wav')
+    
+def _add_static_image_to_audio(image_path, audio_path, output_path):
+    audio_clip = AudioFileClip(audio_path)
+    image_clip = ImageClip(image_path)
+    video_clip = image_clip.set_audio(audio_clip)
+    video_clip.duration = audio_clip.duration
+    video_clip.fps = 1
+    video_clip.write_videofile(output_path)
+    
 
 # ====== Image Functions =====
 
 # Returns dataframe with
 #  index: sender_id
 #  cols:  message_count, name
+def upload_to_service(fname, image=True):
+    d = open(f'./{fname}', 'rb').read()
+    h = {
+        'X-Access-Token': f"{TOKEN}",
+        'Content-Type': 'image/jpeg' if image else 'video/mp4'
+    }
+    response = requests.post('https://image.groupme.com/pictures', 
+                             headers=h, data=d)
+    if response:
+        return response.json()['payload']['picture_url']
+    else:
+        return response.json()
+
+
 def _get_message_counts():
     _log('fetching messages')
     df = data_access.get_full_chat()
@@ -470,4 +519,5 @@ CALLS = {
             "!fuck-jacob":fuck_jacob,
             "!commands":commands,
             "!ai-prompt":aiprompt,
+            "!ai-speak":aispeak,
         }

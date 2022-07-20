@@ -10,11 +10,15 @@ import os
 import pandas as pd
 import io
 import sys
+import requests
+import shutil
 from memory_profiler import profile
 
 
 from constants import DB_QUERIES, S3_BUCKET
 
+DEFAULT_PIC_URL = 'https://i.groupme.com/737x888.jpeg.f73d0aeebb70494da3517d7b007db155'
+IMG_PATH = 'default.jpg'
 ALL_DATES = (pd.to_datetime('2010-01-01'), pd.to_datetime('today'))
 
 class DataAccess():
@@ -112,3 +116,9 @@ class DataAccess():
         if ret : 
             self._log({"query returned":ret})
             return ret
+
+    def download_default():
+        r = requests.get(DEFAULT_PIC_URL)
+        if r.status_code == 200:
+            with open(IMG_PATH,'wb') as f:
+                shutil.copyfileobj(r.raw, f)
