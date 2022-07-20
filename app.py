@@ -75,7 +75,7 @@ def webhook():
 def send_message(d):
   url  = BASE_URL+'/bots/post'
   _log(f'message sent: {d}')
-  r = requests.post(url, data=d)
+  r = requests.post(url, json=d)
   return r
 
 def send_image(img_urls, send=True, typ='image'):
