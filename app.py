@@ -35,9 +35,9 @@ GM_BOT_ID = '850624'
 GROUP_ID  = '29766648'
 ALL_DATES = (pd.to_datetime('2010-01-01'), pd.to_datetime('today'))
 
-IMG_PATH = './default.jpg'
-AUD_PATH = './rec.wav'
-OUT_PATH = './rec.mp4'
+IMG_PATH = 'default.jpg'
+AUD_PATH = 'rec.wav'
+OUT_PATH = 'rec.mp4'
 
 PUNCS = ['.','?','!']
 
