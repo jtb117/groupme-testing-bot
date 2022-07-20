@@ -10,7 +10,6 @@ TODO:
 import os
 import sys
 import requests
-import io
 import openai
 import pandas as pd
 import uberduckapi as ud
@@ -39,6 +38,8 @@ ALL_DATES = (pd.to_datetime('2010-01-01'), pd.to_datetime('today'))
 IMG_PATH = 'default.jpg'
 AUD_PATH = 'rec.wav'
 OUT_PATH = 'rec.mp4'
+
+PUNCS = ['.','?','!']
 
 data_access = DataAccess(DATABASE_URL)
 data_access.download_default()
@@ -405,16 +406,21 @@ def _openai(text):
 
 def bot_answer(data):
     _log('bot is answering')
-    BASE_PROMPT = "Continue this conversation as FellasBot. Send only 1 reply.\n"
+    BASE_PROMPT = "Continue this conversation as FellasBot. Send only 1 reply. \
+        Do not speak as anyone bot FellasBot. Do not send more than 1 message.\n"
     recent = _read_up(data)
     filtered = []
+    pass_next = False
     for i in recent:
         t = i['text']
         if not t: pass
-        elif i['sender_id'] != GM_BOT_ID and '@bot' not in t:
-            if 'fellasbot' in i['text'].lower():
-                filtered.append(i)
-                break
+        if '@bot' in t:
+            pass_next = True
+        elif pass_next:
+            pass_next = False # doesnt catch multi message replies
+        else:
+            t = t.strip()
+            if t[-1] not in PUNCS: t += '.'
             t = t.replace('\n', ' ')
             filtered.append(i)
     filtered = list(reversed(filtered))
@@ -439,7 +445,7 @@ def _read_up(data):
 def aispeak(data):
     _get_rec(data)
     _add_static_image_to_audio(IMG_PATH, AUD_PATH, OUT_PATH)
-    _send_file
+    _send_file()
 
 def _get_rec(data, voice='hal-9000'):
     text = data['text']
@@ -521,3 +527,6 @@ CALLS = {
             "!ai-prompt":aiprompt,
             "!ai-speak":aispeak,
         }
+
+def _send_file():
+    pass
