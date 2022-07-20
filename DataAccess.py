@@ -114,7 +114,6 @@ class DataAccess():
         conn.commit()
         conn.close()
         if ret : 
-            self._log({"query returned":ret})
             return ret
 
     def download_default(self):

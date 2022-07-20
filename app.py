@@ -462,6 +462,17 @@ def _add_static_image_to_audio(image_path, audio_path, output_path):
     video_clip.fps = 1
     video_clip.write_videofile(output_path)
     
+def aiimage(data):
+    basic_message('Hold please')
+    instruct = data['text'][15:]
+    r = requests.post(
+        "https://api.deepai.org/api/text2img",
+        data={'text': instruct},
+        headers={'api-key': 'quickstart-QUdJIGlzIGNvbWluZy4uLi4K'}
+    )
+    url = r.json()['output_url']
+    basic_message(url)
+    
 
 # ====== Image Functions =====
 
@@ -526,6 +537,7 @@ CALLS = {
             "!commands":commands,
             "!ai-prompt":aiprompt,
             "!ai-speak":aispeak,
+            "!ai-image":aiimage,
         }
 
 def _send_file():
